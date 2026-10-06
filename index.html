@@ -1,0 +1,3227 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#030309">
+<meta name="description" content="LEVEL//SYSTEM — Real Life Level-Up Protocol. Your personal AI operating system for self-improvement.">
+<title>LEVEL//SYSTEM — Real Life Level-Up Protocol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config={
+  theme:{
+    extend:{
+      colors:{
+        void:'#030309',
+        panel:'#0A0E1C',
+        panel2:'#0E1430',
+        neon:'#00E5FF',
+        neon2:'#3B82F6',
+        viol:'#A855F7',
+        mut:'#8B9BB8'
+      },
+      fontFamily:{
+        orb:['Orbitron','sans-serif'],
+        raj:['Rajdhani','sans-serif'],
+        mono:['JetBrains Mono','monospace']
+      }
+    }
+  }
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{--neon:#00E5FF;--blue:#3B82F6;--viol:#A855F7;--bg:#030309}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:#E6F1FF;font-family:Rajdhani,sans-serif;overflow-x:hidden;min-height:100vh}
+::selection{background:#00E5FF;color:#000}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:#05070F}
+::-webkit-scrollbar-thumb{background:linear-gradient(#00E5FF,#A855F7);border-radius:99px}
+.font-orb{font-family:Orbitron,sans-serif}
+.font-mono{font-family:'JetBrains Mono',monospace}
+.grid-bg{background-image:linear-gradient(rgba(0,229,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.05) 1px,transparent 1px);background-size:40px 40px}
+.scanlines{position:fixed;inset:0;pointer-events:none;z-index:70;background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.15) 2px 4px);opacity:.4}
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:69;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.75) 100%)}
+.hud{position:relative;background:linear-gradient(160deg,rgba(10,14,28,.92),rgba(8,10,24,.85));border:1px solid rgba(0,229,255,.18);border-radius:14px;backdrop-filter:blur(14px);box-shadow:0 0 0 1px rgba(0,0,0,.5),0 10px 40px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06)}
+.hud::before,.hud::after{content:'';position:absolute;width:16px;height:16px;border:2px solid var(--neon);opacity:.7;pointer-events:none}
+.hud::before{top:-1px;left:-1px;border-right:none;border-bottom:none;border-radius:14px 0 0 0}
+.hud::after{bottom:-1px;right:-1px;border-left:none;border-top:none;border-radius:0 0 14px 0}
+.hud-viol{border-color:rgba(168,85,247,.28)}
+.hud-viol::before,.hud-viol::after{border-color:var(--viol)}
+.hud-red{border-color:rgba(239,68,68,.3)}
+.hud-red::before,.hud-red::after{border-color:#EF4444}
+.btn-sys{position:relative;font-family:Orbitron,sans-serif;font-weight:700;letter-spacing:.12em;background:linear-gradient(90deg,#00E5FF,#3B82F6);color:#001318;padding:.85rem 1.5rem;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);transition:.22s;text-transform:uppercase;font-size:.76rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5rem}
+.btn-sys:hover{filter:brightness(1.15);box-shadow:0 0 25px rgba(0,229,255,.45);transform:translateY(-1px)}
+.btn-sys:active{transform:translateY(1px)}
+.btn-ghost{font-family:Orbitron,sans-serif;font-size:.72rem;letter-spacing:.14em;border:1px solid rgba(0,229,255,.4);color:#00E5FF;padding:.8rem 1.3rem;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);transition:.22s;background:rgba(0,229,255,.05);text-transform:uppercase;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.5rem}
+.btn-ghost:hover{background:rgba(0,229,255,.14);box-shadow:0 0 20px rgba(0,229,255,.25);transform:translateY(-1px)}
+.btn-viol{background:linear-gradient(90deg,#A855F7,#6366F1);color:#fff}
+.btn-viol:hover{box-shadow:0 0 25px rgba(168,85,247,.45)}
+.inp{background:rgba(0,0,0,.55);border:1px solid rgba(0,229,255,.2);border-radius:8px;padding:.75rem 1rem;color:#E6F1FF;width:100%;font-family:Rajdhani,sans-serif;font-weight:500;outline:none;transition:.2s}
+.inp:focus{border-color:#00E5FF;box-shadow:0 0 0 3px rgba(0,229,255,.15),0 0 20px rgba(0,229,255,.2)}
+select.inp option{background:#0A0E1C;color:#E6F1FF}
+.chip{border:1px solid rgba(0,229,255,.22);border-radius:99px;padding:.45rem .9rem;font-size:.82rem;font-weight:600;cursor:pointer;transition:.2s;background:rgba(255,255,255,.02);user-select:none;display:inline-flex;align-items:center;gap:.35rem}
+.chip:hover{border-color:rgba(0,229,255,.5);background:rgba(0,229,255,.06)}
+.chip.on{background:linear-gradient(90deg,rgba(0,229,255,.22),rgba(59,130,246,.22));border-color:#00E5FF;color:#fff;box-shadow:0 0 14px rgba(0,229,255,.3)}
+.xpbar{height:10px;background:rgba(0,229,255,.12);border-radius:99px;overflow:hidden;position:relative;border:1px solid rgba(0,229,255,.2)}
+.xpbari{display:block;height:100%;background:linear-gradient(90deg,#00E5FF,#3B82F6,#A855F7);box-shadow:0 0 12px #00E5FF;border-radius:99px;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.statbar{height:7px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden}
+.statbari{display:block;height:100%;border-radius:99px;transition:width .8s}
+.rank-E{color:#8B9BB8}
+.rank-D{color:#4ADE80}
+.rank-C{color:#00E5FF}
+.rank-B{color:#3B82F6}
+.rank-A{color:#A855F7}
+.rank-S{color:#FACC15;text-shadow:0 0 14px #FACC15}
+.rank-SS{color:#fff;text-shadow:0 0 18px #A855F7,0 0 35px #00E5FF}
+.toast{background:linear-gradient(160deg,#0A0E1C,#0E1430);border:1px solid rgba(0,229,255,.35);border-left:4px solid #00E5FF;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,.6),0 0 25px rgba(0,229,255,.15);animation:tin .45s cubic-bezier(.2,.9,.3,1.2);backdrop-filter:blur(10px)}
+.toast.warn{border-left-color:#FACC15;border-color:rgba(250,204,21,.4)}
+.toast.bad{border-left-color:#EF4444;border-color:rgba(239,68,68,.4)}
+.toast.good{border-left-color:#4ADE80}
+.toast.viol{border-left-color:#A855F7}
+@keyframes tin{from{transform:translateX(120%);opacity:0}to{transform:none;opacity:1}}
+@keyframes tout{to{transform:translateX(120%);opacity:0}}
+@keyframes flick{0%,100%{opacity:1}92%{opacity:1}93%{opacity:.45}94%{opacity:1}96%{opacity:.6}97%{opacity:1}}
+@keyframes glowscan{0%{transform:translateX(-100%)}100%{transform:translateX(400%)}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 16px rgba(0,229,255,.25)}50%{box-shadow:0 0 35px rgba(0,229,255,.55)}}
+@keyframes spinRing{to{transform:rotate(360deg)}}
+@keyframes blinkc{50%{opacity:0}}
+@keyframes lvlIn{0%{opacity:0;transform:scale(.88)}100%{opacity:1;transform:scale(1)}}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.flick{animation:flick 4s infinite}
+.floaty{animation:floaty 4.5s ease-in-out infinite}
+.pulseGlow{animation:pulseGlow 2.5s infinite}
+.navbtn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:.5rem .25rem;font-size:.62rem;font-family:Orbitron;letter-spacing:.08em;color:#8B9BB8;border-radius:10px;transition:.2s;min-width:54px;cursor:pointer}
+.navbtn.on{color:#00E5FF}
+.navbtn.on .nic{background:rgba(0,229,255,.15);border-color:#00E5FF;box-shadow:0 0 15px rgba(0,229,255,.35)}
+.nic{width:38px;height:38px;border-radius:10px;border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.03);transition:.2s}
+.sidebtn{display:flex;align-items:center;gap:.75rem;padding:.7rem .9rem;border-radius:10px;color:#8B9BB8;font-weight:600;transition:.2s;border:1px solid transparent;width:100%;text-align:left;cursor:pointer}
+.sidebtn:hover{color:#fff;background:rgba(0,229,255,.06)}
+.sidebtn.on{color:#00E5FF;background:rgba(0,229,255,.09);border-color:rgba(0,229,255,.25)}
+.qcard{transition:.22s;cursor:pointer}
+.qcard:hover{transform:translateY(-2px);border-color:rgba(0,229,255,.45)}
+.qcard.done{opacity:.55;border-color:rgba(74,222,128,.35)}
+.qcard.done .qtitle{text-decoration:line-through;color:#8B9BB8}
+.skillnode{width:56px;height:56px;border-radius:14px;border:2px solid rgba(255,255,255,.12);background:#0A0E1C;display:flex;align-items:center;justify-content:center;font-family:Orbitron;font-weight:800;font-size:.75rem;cursor:pointer;transition:.25s;position:relative;flex-shrink:0}
+.skillnode.unlocked{border-color:#00E5FF;background:linear-gradient(160deg,rgba(0,229,255,.25),rgba(59,130,246,.2));box-shadow:0 0 20px rgba(0,229,255,.4);color:#fff}
+.skillnode.avail{border-color:rgba(250,204,21,.7);box-shadow:0 0 12px rgba(250,204,21,.25);animation:pulseGlow 2s infinite}
+.skillnode.locked{opacity:.45}
+.heat{width:100%;aspect-ratio:1;border-radius:4px;background:rgba(255,255,255,.06);transition:.2s}
+.heat:hover{transform:scale(1.15)}
+.tl-dot{width:10px;height:10px;border-radius:99px;background:#00E5FF;box-shadow:0 0 8px #00E5FF;flex-shrink:0}
+.lockblur{filter:blur(5px);pointer-events:none;user-select:none}
+.shine{position:relative;overflow:hidden}
+.shine::after{content:'';position:absolute;top:0;bottom:0;width:60px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);animation:glowscan 3s infinite}
+#boot{transition:opacity .6s}
+input[type=time].inp{color-scheme:dark}
+:focus-visible{outline:2px solid #00E5FF;outline-offset:2px}
+body.reduced-motion *,body.reduced-motion *::before,body.reduced-motion *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+.print-only{display:none}
+@media print{.no-print{display:none!important}.print-only{display:block!important}body{background:#fff;color:#000;padding:1rem}}
+.boss-hp{height:10px;border-radius:99px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);overflow:hidden}
+.boss-hpi{display:block;height:100%;background:linear-gradient(90deg,#EF4444,#F97316);box-shadow:0 0 12px #EF4444;transition:width .6s}
+.tabbtn{padding:.45rem .85rem;border-radius:8px;font-family:Orbitron;font-size:.65rem;letter-spacing:.1em;color:#8B9BB8;border:1px solid transparent;transition:.2s;cursor:pointer}
+.tabbtn:hover{color:#fff;background:rgba(255,255,255,.04)}
+.tabbtn.on{color:#00E5FF;border-color:rgba(0,229,255,.4);background:rgba(0,229,255,.08)}
+</style>
+</head>
+<body class="antialiased selection:bg-cyan-400 selection:text-black">
+<a href="#main" class="sr-only focus:not-sr-only">Skip to content</a>
+
+<!-- BOOT ANIMATION -->
+<div id="boot" class="fixed inset-0 z-[100] bg-void flex flex-col items-center justify-center p-6 select-none">
+  <div class="font-orb text-3xl md:text-5xl font-black tracking-widest text-center">
+    <span class="text-neon">LEVEL</span><span class="text-white">///</span><span class="text-viol">SYSTEM</span>
+  </div>
+  <div class="font-mono text-neon/80 text-xs mt-4 tracking-widest" id="bootLog">INITIALIZING PROTOCOL ...</div>
+  <div class="w-64 md:w-96 mt-6 xpbar">
+    <i id="bootBar" class="xpbari" style="width:0%"></i>
+  </div>
+  <div class="font-mono text-[10px] text-mut mt-3 tracking-widest">SECURE // ADAPTIVE // REALISTIC</div>
+</div>
+
+<!-- BACKGROUND MATRIX -->
+<canvas id="bgc" class="fixed inset-0 z-0 opacity-50 pointer-events-none"></canvas>
+<div class="fixed inset-0 z-0 grid-bg opacity-70 pointer-events-none"></div>
+<div class="fixed -top-40 -left-40 w-[500px] h-[500px] rounded-full z-0 pointer-events-none" style="background:radial-gradient(circle,rgba(0,229,255,.12),transparent 70%)"></div>
+<div class="fixed -bottom-40 -right-40 w-[600px] h-[600px] rounded-full z-0 pointer-events-none" style="background:radial-gradient(circle,rgba(168,85,247,.12),transparent 70%)"></div>
+<div class="scanlines"></div>
+<div class="vignette"></div>
+
+<!-- ═════════ 1. LANDING PAGE ═════════ -->
+<section id="screen-landing" class="relative z-10">
+  <nav class="no-print max-w-7xl mx-auto flex items-center justify-between px-4 md:px-8 py-5">
+    <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+      <div class="w-10 h-10 rounded-lg flex items-center justify-center font-orb font-black text-black text-lg shadow-[0_0_20px_rgba(0,229,255,.45)]" style="background:linear-gradient(135deg,#00E5FF,#A855F7)">L</div>
+      <div class="font-orb tracking-widest text-sm md:text-base font-bold">LEVEL<span class="text-neon">///</span>SYSTEM</div>
+    </div>
+    <div class="hidden md:flex items-center gap-8 font-mono text-xs tracking-widest text-mut">
+      <a href="#protocol" class="hover:text-neon transition">PROTOCOL</a>
+      <a href="#ranks" class="hover:text-neon transition">RANKS</a>
+      <a href="#features" class="hover:text-neon transition">SYSTEMS</a>
+      <a href="#pricing" class="hover:text-neon transition">PRICING</a>
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="openAuth('login')" class="btn-ghost !py-2 !px-4 hidden sm:inline-flex">Login</button>
+      <button onclick="openAuth('signup')" class="btn-sys !py-2.5 !px-5">Initialize</button>
+    </div>
+  </nav>
+
+  <header class="max-w-7xl mx-auto px-4 md:px-8 pt-8 md:pt-16 pb-12 grid lg:grid-cols-2 gap-10 items-center">
+    <div>
+      <div class="inline-flex items-center gap-2 hud !rounded-full px-4 py-1.5 font-mono text-[10px] tracking-[.25em] text-neon mb-6">
+        <span class="w-2 h-2 rounded-full bg-neon animate-pulse"></span> REAL LIFE LEVEL-UP PROTOCOL v3.2
+      </div>
+      <h1 class="font-orb font-black text-4xl sm:text-5xl md:text-6xl leading-tight flick">
+        STOP EXISTING.<br>
+        <span class="text-transparent bg-clip-text" style="background-image:linear-gradient(90deg,#00E5FF,#A855F7)">START LEVELING.</span>
+      </h1>
+      <p class="mt-6 text-lg text-mut max-w-lg leading-relaxed">
+        A personal AI operating system that converts your real schedule, goals and hard constraints into <span class="text-white font-semibold">daily quests, ranks, skill trees and analytics</span> — realistic on the inside, cinematic on the surface.
+      </p>
+      <div class="flex flex-wrap gap-3 mt-8">
+        <button onclick="openAuth('signup')" class="btn-sys shine">◆ Create Account — Free</button>
+        <button onclick="enterDemo()" class="btn-ghost">▷ Enter Demo Protocol</button>
+      </div>
+      <div class="flex flex-wrap gap-x-6 gap-y-2 mt-8 font-mono text-[11px] text-mut tracking-wider">
+        <span>✓ NO IMPOSSIBLE SCHEDULES</span>
+        <span>✓ SAFE PROTOCOLS ONLY</span>
+        <span>✓ MOBILE-FIRST ANDROID/IOS</span>
+      </div>
+      <div class="mt-6 font-mono text-xs text-viol/90">
+        [ SYSTEM ] AWAITING PLAYER ... _<span style="animation:blinkc 1s infinite">▌</span>
+      </div>
+    </div>
+    <div class="relative">
+      <div class="hud p-5 md:p-7 floaty">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <div class="font-mono text-[10px] text-neon tracking-[.3em]">[ PLAYER CARD ]</div>
+            <div class="font-orb font-bold text-xl mt-1">SHADOW_GRINDER</div>
+          </div>
+          <div class="text-right">
+            <div class="font-orb font-black text-3xl rank-C">C</div>
+            <div class="font-mono text-[10px] text-mut">RANK</div>
+          </div>
+        </div>
+        <div class="flex justify-between font-mono text-xs mb-1">
+          <span class="text-mut">LVL 12</span>
+          <span class="text-neon">1,240 / 1,480 XP</span>
+        </div>
+        <div class="xpbar mb-5">
+          <i class="xpbari" style="width:78%"></i>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-xs font-mono mb-4">
+          <div class="p-2 rounded bg-white/5 border border-white/10 flex justify-between">
+            <span class="text-mut">STR</span><span class="text-red-400 font-bold">14</span>
+          </div>
+          <div class="p-2 rounded bg-white/5 border border-white/10 flex justify-between">
+            <span class="text-mut">INT</span><span class="text-blue-400 font-bold">19</span>
+          </div>
+          <div class="p-2 rounded bg-white/5 border border-white/10 flex justify-between">
+            <span class="text-mut">FOC</span><span class="text-cyan-400 font-bold">16</span>
+          </div>
+          <div class="p-2 rounded bg-white/5 border border-white/10 flex justify-between">
+            <span class="text-mut">DISC</span><span class="text-yellow-400 font-bold">18</span>
+          </div>
+        </div>
+        <div class="p-3 rounded-lg font-mono text-xs border border-neon/30 bg-neon/5 flex items-center justify-between">
+          <div>
+            <span class="text-neon">[ SYSTEM ]</span> QUEST COMPLETE: Deep Work 25m
+          </div>
+          <span class="text-green-400 font-bold ml-2">+4 XP</span>
+        </div>
+      </div>
+      <div class="absolute -top-3 -right-3 hud !rounded-full px-4 py-1 font-orb text-[10px] tracking-widest text-yellow-300 pulseGlow">
+        ◈ STREAK 14
+      </div>
+    </div>
+  </header>
+
+  <!-- PROTOCOL SECTION -->
+  <div id="protocol" class="max-w-7xl mx-auto px-4 md:px-8 py-14">
+    <div class="text-center font-mono text-xs tracking-[.35em] text-neon mb-3">[ THE PROTOCOL ]</div>
+    <h2 class="text-center font-orb font-black text-2xl md:text-4xl">FROM CHAOS → <span class="text-neon">SYSTEM</span></h2>
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mt-10">
+      <div class="hud p-5 text-center">
+        <div class="font-orb text-neon text-2xl font-black">01</div>
+        <div class="font-bold mt-2">Onboard</div>
+        <div class="text-sm text-mut mt-1">Schedule, limits & goals</div>
+      </div>
+      <div class="hud p-5 text-center">
+        <div class="font-orb text-neon text-2xl font-black">02</div>
+        <div class="font-bold mt-2">AI Analysis</div>
+        <div class="text-sm text-mut mt-1">Realistic calibration</div>
+      </div>
+      <div class="hud p-5 text-center">
+        <div class="font-orb text-neon text-2xl font-black">03</div>
+        <div class="font-bold mt-2">Roadmap</div>
+        <div class="text-sm text-mut mt-1">7D → 1 Year Lattice</div>
+      </div>
+      <div class="hud p-5 text-center">
+        <div class="font-orb text-neon text-2xl font-black">04</div>
+        <div class="font-bold mt-2">Execute</div>
+        <div class="text-sm text-mut mt-1">Daily Quests → XP</div>
+      </div>
+      <div class="hud p-5 text-center col-span-2 md:col-span-1">
+        <div class="font-orb text-viol text-2xl font-black">05</div>
+        <div class="font-bold mt-2">Evolve</div>
+        <div class="text-sm text-mut mt-1">Ranks, skills, bosses</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RANKS SECTION -->
+  <div id="ranks" class="max-w-7xl mx-auto px-4 md:px-8 py-10">
+    <div class="hud p-6 md:p-10">
+      <div class="text-center font-mono text-xs tracking-[.35em] text-viol mb-3">[ HIERARCHY ]</div>
+      <h2 class="text-center font-orb font-black text-2xl md:text-3xl mb-8">E → D → C → B → A → S → <span class="rank-SS">SS</span></h2>
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+        <div class="text-center px-4 py-4 rounded-xl border border-white/10 bg-white/[.02]">
+          <div class="font-orb font-black text-2xl rank-E">E</div>
+          <div class="font-mono text-[10px] text-mut mt-1">LVL 1-4</div>
+          <div class="text-xs text-mut mt-1">Dormant</div>
+        </div>
+        <div class="text-center px-4 py-4 rounded-xl border border-white/10 bg-white/[.02]">
+          <div class="font-orb font-black text-2xl rank-D">D</div>
+          <div class="font-mono text-[10px] text-mut mt-1">LVL 5-9</div>
+          <div class="text-xs text-green-400 mt-1">Awakened</div>
+        </div>
+        <div class="text-center px-4 py-4 rounded-xl border border-neon/40 bg-neon/5">
+          <div class="font-orb font-black text-2xl rank-C">C</div>
+          <div class="font-mono text-[10px] text-mut mt-1">LVL 10-14</div>
+          <div class="text-xs text-cyan-400 mt-1">Rising</div>
+        </div>
+        <div class="text-center px-4 py-4 rounded-xl border border-white/10 bg-white/[.02]">
+          <div class="font-orb font-black text-2xl rank-B">B</div>
+          <div class="font-mono text-[10px] text-mut mt-1">LVL 15-19</div>
+          <div class="text-xs text-blue-400 mt-1">Elite</div>
+        </div>
+        <div class="text-center px-4 py-4 rounded-xl border border-white/10 bg-white/[.02]">
+          <div class="font-orb font-black text-2xl rank-A">A</div>
+          <div class="font-mono text-[10px] text-mut mt-1">LVL 20-24</div>
+          <div class="text-xs text-purple-400 mt-1">Master</div>
+        </div>
+        <div class="text-center px-4 py-4 rounded-xl border border-yellow-400/40 bg-yellow-400/5">
+          <div class="font-orb font-black text-2xl rank-S">S</div>
+          <div class="font-mono text-[10px] text-mut mt-1">LVL 25-29</div>
+          <div class="text-xs text-yellow-300 mt-1">Monarch</div>
+        </div>
+        <div class="text-center px-4 py-4 rounded-xl border border-viol/60 bg-viol/10 col-span-2 sm:col-span-1">
+          <div class="font-orb font-black text-2xl rank-SS">SS</div>
+          <div class="font-mono text-[10px] text-mut mt-1">LVL 30+</div>
+          <div class="text-xs text-viol font-bold mt-1">Transcendent</div>
+        </div>
+      </div>
+      <p class="text-center text-mut mt-6 text-sm max-w-2xl mx-auto">
+        XP is intentionally scarce. Normal tasks grant <span class="text-neon font-bold">+1 to +6 XP</span>. Weekly missions grant <span class="text-neon font-bold">+5 to +15 XP</span>. Level requirements grow exponentially harder. Progression is <span class="text-white font-semibold">earned, never given</span>.
+      </p>
+    </div>
+  </div>
+
+  <!-- SUBSYSTEMS -->
+  <div id="features" class="max-w-7xl mx-auto px-4 md:px-8 py-10">
+    <div class="text-center font-mono text-xs tracking-[.35em] text-neon mb-3">[ SUBSYSTEMS ]</div>
+    <h2 class="text-center font-orb font-black text-2xl md:text-4xl mb-10">A FULL OS FOR YOUR LIFE</h2>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="hud p-6">
+        <div class="text-2xl mb-2 text-neon">◈</div>
+        <div class="font-orb font-bold text-sm tracking-wider">AI ROADMAP ENGINE</div>
+        <p class="text-mut text-sm mt-2">7-day → 1-year plans generated from your actual available time, sleep, work and deadlines. Never impossible.</p>
+      </div>
+      <div class="hud p-6">
+        <div class="text-2xl mb-2 text-neon">⬢</div>
+        <div class="font-orb font-bold text-sm tracking-wider">DAILY QUESTS + XP</div>
+        <p class="text-mut text-sm mt-2">Bite-size missions calibrated to your energy peaks. Small XP, real momentum, streaks that matter.</p>
+      </div>
+      <div class="hud p-6">
+        <div class="text-2xl mb-2 text-viol">✦</div>
+        <div class="font-orb font-bold text-sm tracking-wider">7 CORE STATS</div>
+        <p class="text-mut text-sm mt-2">STR · INT · FOC · DISC · CRE · SKL · STA — trained by what you actually do, not what you claim.</p>
+      </div>
+      <div class="hud p-6">
+        <div class="text-2xl mb-2 text-blue-400">❖</div>
+        <div class="font-orb font-bold text-sm tracking-wider">SKILL TREE</div>
+        <p class="text-mut text-sm mt-2">Unlock nodes across Body, Mind, Craft and Will branches as your level and stats qualify you.</p>
+      </div>
+      <div class="hud p-6">
+        <div class="text-2xl mb-2 text-red-400">▲</div>
+        <div class="font-orb font-bold text-sm tracking-wider">MONTHLY BOSS GATES</div>
+        <p class="text-mut text-sm mt-2">Big scary goals split into phases. Damage the boss weekly. Slay it monthly. Safe pressure only.</p>
+      </div>
+      <div class="hud p-6">
+        <div class="text-2xl mb-2 text-green-400">◎</div>
+        <div class="font-orb font-bold text-sm tracking-wider">RECOVERY PROTOCOLS</div>
+        <p class="text-mut text-sm mt-2">Sleep debt, burnout and slumps trigger Recovery Mode — lighter quests, never punishment that harms.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <div id="pricing" class="max-w-6xl mx-auto px-4 md:px-8 py-14">
+    <div class="text-center font-mono text-xs tracking-[.35em] text-neon mb-3">[ ACCESS TIERS ]</div>
+    <h2 class="text-center font-orb font-black text-2xl md:text-4xl">FREE TO START. <span class="text-viol">PREMIUM TO ASCEND.</span></h2>
+    <div class="grid md:grid-cols-2 gap-5 mt-10">
+      <div class="hud p-8 flex flex-col justify-between">
+        <div>
+          <div class="font-orb font-bold tracking-widest text-mut">FREE // RECRUIT</div>
+          <div class="font-orb font-black text-4xl mt-2">₹0</div>
+          <div class="text-mut text-sm">forever</div>
+          <ul class="mt-6 space-y-2.5 text-sm text-mut">
+            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Basic onboarding + AI analysis</li>
+            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Basic roadmap (7D + 30D)</li>
+            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Daily quests, XP, levels, ranks</li>
+            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> 7 stats + home dashboard</li>
+            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Execution history tracking</li>
+          </ul>
+        </div>
+        <button onclick="openAuth('signup')" class="btn-ghost w-full mt-8">Start Free</button>
+      </div>
+      <div class="hud hud-viol p-8 relative flex flex-col justify-between" style="box-shadow:0 0 40px rgba(168,85,247,.2)">
+        <div>
+          <div class="flex justify-between items-start">
+            <div class="font-orb font-bold tracking-widest text-viol">PREMIUM // S-RANK</div>
+            <span class="font-mono text-[10px] px-3 py-1 rounded-full bg-viol/20 border border-viol/50 text-viol">ASCENDED</span>
+          </div>
+          <div class="grid grid-cols-3 gap-2 mt-4">
+            <div class="p-3 rounded-lg border border-neon/30 text-center cursor-pointer planpick" data-plan="2W" onclick="pickPlan('2W',this)">
+              <div class="font-orb font-bold">₹199</div>
+              <div class="text-[10px] text-mut">2 weeks</div>
+            </div>
+            <div class="p-3 rounded-lg border border-neon/30 text-center cursor-pointer planpick" data-plan="2M" onclick="pickPlan('2M',this)">
+              <div class="font-orb font-bold">₹399</div>
+              <div class="text-[10px] text-mut">2 months</div>
+            </div>
+            <div class="p-3 rounded-lg border border-viol/60 bg-viol/15 text-center cursor-pointer planpick ring-1 ring-viol" data-plan="1Y" onclick="pickPlan('1Y',this)">
+              <div class="font-orb font-bold text-white">₹2,999</div>
+              <div class="text-[10px] text-mut">1 year</div>
+            </div>
+          </div>
+          <ul class="mt-6 space-y-2.5 text-sm">
+            <li class="flex items-center gap-2 text-white"><span class="text-viol font-bold">✓</span> Advanced AI analysis + unlimited roadmap updates*</li>
+            <li class="flex items-center gap-2 text-white"><span class="text-viol font-bold">✓</span> Full skill trees + long-term planning (90D / 6M / 1Y)</li>
+            <li class="flex items-center gap-2 text-white"><span class="text-viol font-bold">✓</span> Advanced analytics + weekly & monthly AI debriefs</li>
+            <li class="flex items-center gap-2 text-white"><span class="text-viol font-bold">✓</span> Custom difficulty calibration & multi-goal lattices</li>
+            <li class="flex items-center gap-2 text-white"><span class="text-viol font-bold">✓</span> High-res PDF roadmap exports</li>
+          </ul>
+        </div>
+        <div>
+          <button onclick="handleAscend()" class="btn-sys btn-viol w-full mt-8">Ascend to Premium</button>
+          <div class="font-mono text-[10px] text-mut mt-3 text-center">*Fair-use limits apply. Secure mock checkout · Cancel anytime.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALL TO ACTION BANNER -->
+  <div class="max-w-7xl mx-auto px-4 md:px-8 pb-12">
+    <div class="hud p-8 text-center" style="background:linear-gradient(160deg,rgba(0,229,255,.08),rgba(168,85,247,.08))">
+      <div class="font-orb font-black text-xl md:text-3xl tracking-wide">
+        THE SYSTEM DOESN'T CHANGE YOUR LIFE.<br>
+        <span class="text-transparent bg-clip-text" style="background-image:linear-gradient(90deg,#00E5FF,#A855F7)">YOUR EXECUTION DOES.</span>
+      </div>
+      <button onclick="openAuth('signup')" class="btn-sys mt-6 shine">◆ Begin Your Protocol</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-neon/10 mt-6">
+    <div class="max-w-7xl mx-auto px-4 md:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-mut">
+      <div class="font-orb text-xs tracking-widest">
+        LEVEL<span class="text-neon">///</span>SYSTEM &copy; 2026
+      </div>
+      <div class="flex flex-wrap justify-center gap-5 font-mono text-[11px]">
+        <a href="#" onclick="openLegal('terms');return false" class="hover:text-neon">TERMS</a>
+        <a href="#" onclick="openLegal('privacy');return false" class="hover:text-neon">PRIVACY</a>
+        <a href="#" onclick="openLegal('refunds');return false" class="hover:text-neon">REFUNDS</a>
+        <a href="#" onclick="openLegal('safety');return false" class="hover:text-neon">SAFETY</a>
+      </div>
+      <div class="font-mono text-[10px]">
+        NO ADS · NO DARK PATTERNS · <span class="cursor-pointer hover:text-neon" onclick="openRedeem()">SYSTEM ACCESS</span>
+      </div>
+    </div>
+  </footer>
+</section>
+
+<!-- ═════════ 2. AUTH SCREEN ═════════ -->
+<section id="screen-auth" class="relative z-10 hidden min-h-screen flex items-center justify-center p-4">
+  <div class="hud w-full max-w-md p-7 md:p-9">
+    <div class="text-center mb-6">
+      <div class="font-mono text-[10px] tracking-[.35em] text-neon">[ SECURE GATEWAY ]</div>
+      <div class="font-orb font-black text-2xl mt-2" id="authTitle">CREATE ACCOUNT</div>
+      <div class="text-mut text-sm mt-1">Your data stays yours. Export or wipe anytime.</div>
+    </div>
+    <div class="grid grid-cols-2 gap-2 mb-6 p-1 rounded-lg bg-black/40 border border-white/10">
+      <button id="tabSignup" onclick="authTab('signup')" class="tabbtn on !text-center">SIGN UP</button>
+      <button id="tabLogin" onclick="authTab('login')" class="tabbtn !text-center">LOGIN</button>
+    </div>
+    <div id="fCallsign">
+      <label class="font-mono text-[10px] text-mut tracking-widest">CALLSIGN (USERNAME)</label>
+      <input id="aUser" class="inp mt-1 mb-3" placeholder="e.g. shadow_grinder" maxlength="18" autocomplete="username">
+    </div>
+    <label class="font-mono text-[10px] text-mut tracking-widest">EMAIL</label>
+    <input id="aEmail" type="email" class="inp mt-1 mb-3" placeholder="player@domain.com" autocomplete="email">
+    <label class="font-mono text-[10px] text-mut tracking-widest">PASSWORD</label>
+    <input id="aPass" type="password" class="inp mt-1 mb-3" placeholder="Min 6 characters" autocomplete="current-password">
+    <div id="fConfirm">
+      <label class="font-mono text-[10px] text-mut tracking-widest">CONFIRM PASSWORD</label>
+      <input id="aPass2" type="password" class="inp mt-1 mb-3" placeholder="Repeat password">
+    </div>
+    <div id="fAgree" class="flex items-start gap-2 text-xs text-mut mb-4 mt-1">
+      <input type="checkbox" id="aAgree" class="mt-1 accent-cyan-400" checked>
+      <span>I agree to the <a href="#" onclick="openLegal('terms');return false" class="text-neon underline">Terms</a> and <a href="#" onclick="openLegal('privacy');return false" class="text-neon underline">Privacy Policy</a>. I am 13+ years of age.</span>
+    </div>
+    <div id="authErr" class="hidden text-red-400 text-sm font-semibold mb-3 p-2.5 rounded bg-red-500/10 border border-red-500/30"></div>
+    <button id="authGo" onclick="submitAuth()" class="btn-sys w-full shine">Create Account</button>
+    <button onclick="enterDemo()" class="btn-ghost w-full mt-2">Explore Demo Account</button>
+    <div class="font-mono text-[10px] text-mut mt-4 text-center leading-relaxed">
+      🔒 Passwords hashed · Safe client session<br>Zero tracker analytics · Local data preservation
+    </div>
+    <button onclick="showScreen('screen-landing')" class="w-full text-center text-mut text-xs mt-4 hover:text-neon">← Back to landing</button>
+  </div>
+</section>
+
+<!-- ═════════ 3. ONBOARDING ═════════ -->
+<section id="screen-onboarding" class="relative z-10 hidden min-h-screen p-4 pb-24">
+  <div class="max-w-3xl mx-auto">
+    <div class="flex items-center justify-between py-5">
+      <div class="font-orb font-bold tracking-widest text-sm">
+        CALIBRATION <span class="text-neon">///</span> <span id="obStepLabel" class="text-mut">STEP 1/4</span>
+      </div>
+      <button onclick="logout()" class="font-mono text-[11px] text-mut hover:text-red-400">ABORT ⨯</button>
+    </div>
+    <div class="xpbar mb-8">
+      <i id="obBar" class="xpbari" style="width:25%"></i>
+    </div>
+    <div class="hud p-6 md:p-10" id="obBody"></div>
+    <div class="flex gap-3 mt-5">
+      <button id="obBack" onclick="obNav(-1)" class="btn-ghost flex-1">← Back</button>
+      <button id="obNext" onclick="obNav(1)" class="btn-sys flex-[2]">Continue →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ 4. AI ANALYSIS PROGRESS ═════════ -->
+<section id="screen-analysis" class="relative z-10 hidden min-h-screen flex items-center justify-center p-4">
+  <div class="hud w-full max-w-2xl p-7 md:p-10 text-center">
+    <div class="relative w-36 h-36 mx-auto mb-6">
+      <div class="absolute inset-0 rounded-full border-2 border-neon/20"></div>
+      <div class="absolute inset-0 rounded-full border-t-2 border-neon" style="animation:spinRing 1.2s linear infinite"></div>
+      <div class="absolute inset-4 rounded-full border border-viol/30 flex items-center justify-center font-orb font-black text-3xl text-neon" id="anPct">0%</div>
+    </div>
+    <div class="font-orb font-black text-xl mb-1">AI ANALYSIS IN PROGRESS</div>
+    <div class="font-mono text-xs text-viol tracking-widest mb-6" id="anPhase">PARSING CHRONOTYPE ...</div>
+    <div class="xpbar mb-6">
+      <i id="anBar" class="xpbari" style="width:0%"></i>
+    </div>
+    <div class="text-left font-mono text-xs bg-black/60 border border-neon/20 rounded-lg p-4 h-44 overflow-y-auto space-y-1" id="anLog"></div>
+  </div>
+</section>
+
+<!-- ═════════ 5. MAIN APP ═════════ -->
+<section id="screen-app" class="relative z-10 hidden">
+  <div class="flex min-h-screen">
+    <!-- Desktop Sidebar -->
+    <aside class="no-print hidden lg:flex flex-col w-60 shrink-0 border-r border-neon/10 bg-black/50 backdrop-blur-xl p-4 gap-1 sticky top-0 h-screen overflow-y-auto">
+      <div class="flex items-center gap-2 px-2 py-3 cursor-pointer" onclick="showView('dashboard')">
+        <div class="w-9 h-9 rounded-lg flex items-center justify-center font-orb font-black text-black" style="background:linear-gradient(135deg,#00E5FF,#A855F7)">L</div>
+        <div class="font-orb font-bold text-xs tracking-widest">LEVEL//SYSTEM</div>
+      </div>
+      <div id="sideNav" class="flex flex-col gap-1 mt-2"></div>
+      <div class="mt-auto hud p-3 !rounded-xl">
+        <div class="font-mono text-[10px] text-mut" id="sidePlan">FREE TIER</div>
+        <button onclick="showView('subscription')" class="btn-sys btn-viol w-full mt-2 !py-2 !text-[10px]" id="sideUpBtn">Ascend ◈</button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 min-w-0 flex flex-col min-h-screen">
+      <!-- Top HUD Header -->
+      <header class="no-print sticky top-0 z-40 bg-void/90 backdrop-blur-xl border-b border-neon/10 px-3 md:px-6 py-2.5">
+        <div class="flex items-center gap-3">
+          <div class="lg:hidden w-9 h-9 rounded-lg flex items-center justify-center font-orb font-black text-black shrink-0" style="background:linear-gradient(135deg,#00E5FF,#A855F7)">L</div>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-2">
+              <span class="font-orb font-bold text-sm truncate" id="hudName">PLAYER</span>
+              <span id="hudRank" class="font-orb font-black text-xs rank-E px-2 py-0.5 rounded border border-white/10 bg-white/5">E</span>
+              <span id="hudPrem" class="hidden font-mono text-[9px] px-2 py-0.5 rounded-full bg-viol/20 border border-viol/50 text-viol">PREMIUM ◈</span>
+            </div>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="font-mono text-[10px] text-mut whitespace-nowrap" id="hudLvl">LV 1</span>
+              <div class="xpbar flex-1 !h-[7px]">
+                <i id="hudXp" class="xpbari" style="width:0%"></i>
+              </div>
+              <span class="font-mono text-[10px] text-neon whitespace-nowrap" id="hudXpT">0 / 80 XP</span>
+            </div>
+          </div>
+          <div class="hidden sm:flex items-center gap-2 shrink-0">
+            <div class="text-center px-3 py-1 rounded-lg bg-white/5 border border-white/10">
+              <div class="font-orb font-bold text-sm text-orange-400" id="hudStreak">0</div>
+              <div class="font-mono text-[8px] text-mut">STREAK</div>
+            </div>
+            <div class="text-center px-3 py-1 rounded-lg bg-white/5 border border-white/10">
+              <div class="font-orb font-bold text-sm text-neon" id="hudSP">0</div>
+              <div class="font-mono text-[8px] text-mut">SKILL PT</div>
+            </div>
+          </div>
+          <div class="relative">
+            <button onclick="toggleNotifPanel()" class="relative w-9 h-9 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center hover:border-neon/50" aria-label="Notifications">
+              <span class="text-xs">◉</span>
+              <span id="notifDot" class="hidden absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+            </button>
+            <div id="notifPanel" class="hidden absolute right-0 top-11 w-72 md:w-80 hud p-3 max-h-72 overflow-y-auto z-50"></div>
+          </div>
+          <button onclick="showView('profile')" class="w-9 h-9 rounded-lg font-orb font-bold text-black flex items-center justify-center shrink-0" style="background:linear-gradient(135deg,#00E5FF,#3B82F6)" id="hudAvatar" aria-label="Profile">P</button>
+        </div>
+      </header>
+
+      <!-- Views Container -->
+      <main id="main" class="flex-1 p-3 md:p-6 pb-28 lg:pb-10 max-w-6xl w-full mx-auto">
+        <div id="view-dashboard" class="appview"></div>
+        <div id="view-quests" class="appview hidden"></div>
+        <div id="view-roadmap" class="appview hidden"></div>
+        <div id="view-stats" class="appview hidden"></div>
+        <div id="view-skills" class="appview hidden"></div>
+        <div id="view-bosses" class="appview hidden"></div>
+        <div id="view-analytics" class="appview hidden"></div>
+        <div id="view-history" class="appview hidden"></div>
+        <div id="view-profile" class="appview hidden"></div>
+        <div id="view-subscription" class="appview hidden"></div>
+        <div id="view-settings" class="appview hidden"></div>
+      </main>
+
+      <!-- Mobile Bottom Navigation -->
+      <nav class="no-print lg:hidden fixed bottom-0 inset-x-0 z-40 bg-void/95 backdrop-blur-xl border-t border-neon/15 px-2 pt-1" style="padding-bottom:calc(.4rem + env(safe-area-inset-bottom));">
+        <div class="grid grid-cols-5 gap-1 max-w-lg mx-auto" id="bottomNav"></div>
+      </nav>
+
+      <!-- Mobile More Sheet -->
+      <div id="moreSheet" class="no-print hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end">
+        <div class="hud p-5 w-full max-w-lg mx-auto rounded-b-none" style="padding-bottom:calc(1.5rem + env(safe-area-inset-bottom))">
+          <div class="flex justify-between items-center mb-4">
+            <span class="font-orb font-bold text-sm tracking-widest">ALL SUBSYSTEMS</span>
+            <button onclick="toggleMore(false)" class="text-mut text-xl p-1">⨯</button>
+          </div>
+          <div class="grid grid-cols-4 gap-2" id="moreGrid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ OVERLAYS & TOASTS ═════════ -->
+<div id="toasts" class="no-print fixed top-4 right-4 z-[90] flex flex-col gap-2 w-[calc(100%-2rem)] max-w-sm pointer-events-none"></div>
+
+<div id="floatXp" class="no-print fixed z-[91] pointer-events-none font-orb font-black text-neon text-2xl hidden drop-shadow-[0_0_10px_#00E5FF]">+5 XP</div>
+
+<!-- LEVEL UP OVERLAY -->
+<div id="lvlOverlay" class="hidden fixed inset-0 z-[95] bg-black/90 backdrop-blur-md flex items-center justify-center p-6">
+  <div class="hud p-8 md:p-10 text-center max-w-md w-full" style="animation:lvlIn .5s cubic-bezier(.2,.9,.3,1.2);box-shadow:0 0 80px rgba(0,229,255,.4)">
+    <div class="font-mono text-xs tracking-[.4em] text-neon">[ SYSTEM ]</div>
+    <div class="font-orb font-black text-4xl md:text-5xl mt-2 text-transparent bg-clip-text" style="background-image:linear-gradient(90deg,#00E5FF,#A855F7)">LEVEL UP</div>
+    <div class="font-orb font-black text-6xl mt-3 text-white" id="lvlNum">2</div>
+    <div class="font-mono text-sm text-neon mt-2" id="lvlRank">RANK E · +1 SKILL POINT</div>
+    <div class="grid grid-cols-3 gap-2 mt-6 font-mono text-xs" id="lvlRewards"></div>
+    <button onclick="closeLvl()" class="btn-sys w-full mt-8">Claim &amp; Continue ◈</button>
+  </div>
+</div>
+
+<!-- UNIVERSAL MODAL -->
+<div id="modalRoot" class="hidden fixed inset-0 z-[96] bg-black/85 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-6" onclick="if(event.target===this)closeModal()">
+  <div class="hud w-full sm:max-w-lg max-h-[90vh] overflow-y-auto p-6 md:p-8 rounded-b-none sm:rounded-b-[14px]" id="modalBox" role="dialog" aria-modal="true"></div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════
+   1. CORE UTILITIES & CRYPTOGRAPHY
+   ══════════════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+const $$ = s => document.querySelectorAll(s);
+const uid = () => Math.random().toString(36).slice(2, 9);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const todayKey = () => new Date().toISOString().slice(0, 10);
+const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+
+function hashStr(s) {
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) h = (((h << 5) + h) + s.charCodeAt(i)) | 0;
+  return 'h' + Math.abs(h).toString(36);
+}
+
+// Client-side SHA-256 for private owner gate verification
+async function sha256Hex(str) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+// Hash of the owner unlimited redeem code
+const OWNER_CODE_HASH = "b9f5cf8ff29cb8c1e7a0305d218dc339c905ba2aa32b508f657a82ecaa17ba95";
+
+function fmtTime(t) {
+  if (!t) return '--:--';
+  let [h, m] = t.split(':').map(Number);
+  let ap = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return h + ':' + String(m).padStart(2, '0') + ' ' + ap;
+}
+
+/* ══════════════════════════════════════════════════
+   2. SYSTEM AUDIO SYNTHESIZER (Web Audio API)
+   ══════════════════════════════════════════════════ */
+let AC = null;
+function beep(f = 880, d = 0.08, type = 'sine', v = 0.05) {
+  if (S?.prefs?.sound === false) return;
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type = type;
+    o.frequency.value = f;
+    g.gain.value = v;
+    o.connect(g);
+    g.connect(AC.destination);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + d);
+    o.stop(AC.currentTime + d);
+  } catch (e) {}
+}
+
+/* ══════════════════════════════════════════════════
+   3. STATE & DATA MODELS
+   ══════════════════════════════════════════════════ */
+const DB = 'levelsystem_v3';
+let S = null;
+
+function save() {
+  try { localStorage.setItem(DB, JSON.stringify(S)); } catch (e) {}
+}
+function load() {
+  try { return JSON.parse(localStorage.getItem(DB)); } catch (e) { return null; }
+}
+function defaultState() {
+  return {
+    user: null,
+    profile: null,
+    sys: null,
+    onboarded: false,
+    view: 'dashboard',
+    prefs: { sound: true, reducedMotion: false, notif: true },
+    redeemAttempts: [],
+    notifs: []
+  };
+}
+
+/* ══════════════════════════════════════════════════
+   4. GAME MATH & STATS
+   ══════════════════════════════════════════════════ */
+function levelReq(l) {
+  return Math.floor(80 + (l - 1) * 45 + Math.pow(l - 1, 1.65) * 18);
+}
+function rankFor(l) {
+  if (l >= 30) return 'SS';
+  if (l >= 25) return 'S';
+  if (l >= 20) return 'A';
+  if (l >= 15) return 'B';
+  if (l >= 10) return 'C';
+  if (l >= 5) return 'D';
+  return 'E';
+}
+function rankName(r) {
+  return {
+    E: 'E — DORMANT',
+    D: 'D — AWAKENED',
+    C: 'C — RISING',
+    B: 'B — ELITE',
+    A: 'A — MASTER',
+    S: 'S — MONARCH',
+    SS: 'SS — TRANSCENDENT'
+  }[r] || r;
+}
+
+const STATS = [
+  ['STR', 'Physical capability', '#EF4444'],
+  ['INT', 'Learning & Cognition', '#3B82F6'],
+  ['FOC', 'Deep Focus & Flow', '#00E5FF'],
+  ['DISC', 'Discipline & Willpower', '#FACC15'],
+  ['CRE', 'Creativity & Output', '#A855F7'],
+  ['SKL', 'Skill Craft', '#4ADE80'],
+  ['STA', 'Consistency & Stamina', '#FB923C']
+];
+
+const GOALS = [
+  { id: 'fitness', label: 'Fitness & Body', icon: '◈', color: '#EF4444' },
+  { id: 'coding', label: 'Coding / Tech', icon: '⬢', color: '#00E5FF' },
+  { id: 'study', label: 'Study / Grades', icon: '✎', color: '#3B82F6' },
+  { id: 'career', label: 'Career / Job', icon: '▲', color: '#FACC15' },
+  { id: 'language', label: 'Language', icon: '◐', color: '#4ADE80' },
+  { id: 'business', label: 'Business / Money', icon: '◆', color: '#FB923C' },
+  { id: 'creative', label: 'Creative Skill', icon: '✦', color: '#A855F7' },
+  { id: 'mindset', label: 'Mindset / Habits', icon: '◎', color: '#94A3B8' }
+];
+
+const QBANK = {
+  fitness: [
+    ['Mobility flow 10 min', 'STR', 10, 2],
+    ['Walk 20 min (sunlight, no phone)', 'STA', 20, 3],
+    ['Push-up ladder 5×5', 'STR', 12, 3],
+    ['Protein target + 2.5L water check', 'DISC', 5, 2],
+    ['Core workout 8 min', 'STR', 8, 2],
+    ['Stretch + breathwork 5 min', 'FOC', 5, 1],
+    ['Stairs climb 10 min rep', 'STA', 10, 2]
+  ],
+  coding: [
+    ['Focused code block 25 min', 'FOC', 25, 4],
+    ['1 logic drill / Leetcode easy', 'INT', 20, 3],
+    ['Read documentation 15 min + notes', 'INT', 15, 2],
+    ['Build one micro-feature / debug', 'SKL', 30, 5],
+    ['Review yesterday codebase 10 min', 'SKL', 10, 2],
+    ['Refactor 1 messy module', 'FOC', 15, 3]
+  ],
+  study: [
+    ['Deep study pomodoro 25 min', 'FOC', 25, 4],
+    ['Active recall — 15 flashcards', 'INT', 15, 3],
+    ['Summarize 1 topic in own words', 'INT', 15, 3],
+    ['1 past-paper question timed', 'SKL', 20, 4],
+    ['Organize next session study notes', 'DISC', 10, 2]
+  ],
+  career: [
+    ['1 resume / portfolio upgrade item', 'SKL', 25, 4],
+    ['Target outreach / application ×2', 'DISC', 20, 4],
+    ['Interview Q rehearsal 15 min', 'INT', 15, 3],
+    ['Learn 1 industry tool workflow 20 min', 'SKL', 20, 3],
+    ['Network follow-up / email check', 'DISC', 10, 2]
+  ],
+  language: [
+    ['Vocab drill 15 new words', 'INT', 15, 3],
+    ['Target audio listening 15 min', 'FOC', 15, 2],
+    ['Speak aloud monologue 10 min', 'SKL', 10, 3],
+    ['Grammar pattern exercise set', 'INT', 15, 2],
+    ['Write 5 complex sentences', 'CRE', 12, 2]
+  ],
+  business: [
+    ['Market analysis / reading 20 min', 'INT', 20, 3],
+    ['Core offer / copy draft 25 min', 'SKL', 25, 4],
+    ['Customer outreach / survey ×3', 'DISC', 20, 4],
+    ['Track income/expense metrics', 'DISC', 10, 2]
+  ],
+  creative: [
+    ['Uninterrupted drafting 25 min', 'CRE', 25, 4],
+    ['Deconstruct 1 masterwork study', 'INT', 15, 2],
+    ['Skill drill technique rep 15 min', 'SKL', 15, 3],
+    ['Publish / commit work in progress', 'DISC', 15, 3]
+  ],
+  mindset: [
+    ['Reflective journal 5 min', 'FOC', 5, 2],
+    ['Mindfulness / breath control 8 min', 'FOC', 8, 2],
+    ['No phone in first 30 min of wake', 'DISC', 30, 3],
+    ['3 Gratitudes + Priority Lock', 'STA', 8, 2],
+    ['Digital Sunset 60m before bed', 'DISC', 60, 3]
+  ],
+  general: [
+    ['Plan tomorrow — top 3 missions', 'DISC', 8, 2],
+    ['Clean / optimize physical desk', 'DISC', 10, 1],
+    ['Read 10 pages non-fiction', 'INT', 15, 2],
+    ['Sleep window hold tonight', 'STA', 5, 3]
+  ]
+};
+
+const WBANK = {
+  fitness: 'Complete 4 scheduled physical workouts this week',
+  coding: 'Ship one functional mini-module / project push',
+  study: 'Finish 1 full topic syllabus + 50 recall cards',
+  career: 'Send 6 high-quality applications or connect outreaches',
+  language: 'Learn 60 target words + complete 2 audio sessions',
+  business: 'Complete offer test + document 3 customer feedback notes',
+  creative: 'Complete and polish 2 creative drafts',
+  mindset: 'Execute 7-day morning phone delay streak',
+  general: 'Achieve 80%+ completion rate across daily quests'
+};
+
+const BBOSS = [
+  ['THE PROCRASTINATION WRAITH', 'Reclaim 20 lost hours of stolen time', ['Phone-free morning window ×7', 'Complete 3 feared backlog items', '60-min digital sunset ×10', 'Weekly performance audit'], 20],
+  ['THE PLATEAU GOLEM', 'Break your current ceiling through deliberate reps', ['Perform comprehensive skill audit', '10 deliberate high-focus blocks', 'Obtain real external review/feedback', 'Publish / deploy 1 stretch artifact'], 25],
+  ['THE CHAOS HYDRA', 'Master time, energy, and routine architecture', ['Lock sleep window for 14 continuous days', 'Set up automated daily focus block', 'Design 100% realistic ideal week lattice', 'Eliminate top distraction trigger completely'], 30]
+];
+
+const SKILLTREE = [
+  {
+    br: 'BODY', color: '#EF4444',
+    nodes: [
+      ['Iron Base', 'Complete 10 STR daily quests', 2, 'STR', 5],
+      ['Engine Forge', '7-day physical activity streak', 5, 'STA', 8],
+      ['Apex Vector', 'Reach STR level 15+', 10, 'STR', 15],
+      ['Titan Will', '30-day consistency score 85%', 15, 'STA', 18],
+      ['War Machine', 'Slay Monthly Boss Gate 1', 20, 'STR', 22]
+    ]
+  },
+  {
+    br: 'MIND', color: '#00E5FF',
+    nodes: [
+      ['Deep Flow I', 'Accumulate 10 deep focus blocks', 2, 'FOC', 5],
+      ['Memory Core', 'Reach INT level 12+', 5, 'INT', 12],
+      ['Hyper Focus', '50 deep blocks completed', 10, 'FOC', 18],
+      ['Polymath', '3 stats above 15+', 15, 'INT', 18],
+      ['Oracle Mind', 'FOC 25 + INT 25 mastery', 22, 'FOC', 25]
+    ]
+  },
+  {
+    br: 'CRAFT', color: '#A855F7',
+    nodes: [
+      ['First Spark', 'Ship 5 SKL quests', 2, 'SKL', 5],
+      ['Deliberate Reps', 'Reach SKL level 12+', 5, 'SKL', 12],
+      ['Portfolio Rise', 'Clear 2 Weekly Boss Missions', 10, 'SKL', 16],
+      ['Masterwork', 'Ship 1 major roadmap capstone', 15, 'SKL', 20],
+      ['Transcendent', 'CRE 22 + SKL 22 balance', 22, 'SKL', 22]
+    ]
+  },
+  {
+    br: 'WILL', color: '#FACC15',
+    nodes: [
+      ['Ignition', 'Hold a 3-day quest streak', 1, 'DISC', 3],
+      ['Iron Habit', 'Reach DISC level 10+', 4, 'DISC', 10],
+      ['Unbreakable', 'Hold a 14-day quest streak', 8, 'STA', 12],
+      ['Monarch Will', 'Hold a 30-day quest streak', 15, 'DISC', 18],
+      ['Apex Transcendence', '60-day streak & Rank S', 25, 'STA', 22]
+    ]
+  }
+];
+
+/* ══════════════════════════════════════════════════
+   5. NOTIFICATIONS & FLOATING XP
+   ══════════════════════════════════════════════════ */
+function notify(head, msg, type = 'info', xp = null) {
+  if (!S) return;
+  const colors = {
+    info: ['[ SYSTEM ]', 'text-neon', ''],
+    warn: ['[ SYSTEM WARNING ]', 'text-yellow-300', 'warn'],
+    bad: ['[ SYSTEM ]', 'text-red-400', 'bad'],
+    good: ['[ SYSTEM ]', 'text-green-400', 'good'],
+    viol: ['[ SYSTEM ]', 'text-viol', 'viol']
+  };
+  const [tag, cls, extra] = colors[type] || colors.info;
+  S.notifs.unshift({
+    id: uid(),
+    tag,
+    msg: head + (msg ? ' — ' + msg : ''),
+    xp,
+    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    unread: true
+  });
+  S.notifs = S.notifs.slice(0, 40);
+  save();
+
+  if (S.prefs.notif) {
+    const t = document.createElement('div');
+    t.className = 'toast p-3.5 ' + extra;
+    t.innerHTML = `
+      <div class="font-mono text-[10px] tracking-widest ${cls}">${tag}</div>
+      <div class="font-bold text-sm mt-0.5">${esc(head)}</div>
+      ${msg ? `<div class="text-xs text-mut">${esc(msg)}</div>` : ''}
+      ${xp ? `<div class="font-orb font-bold text-neon text-sm mt-1">+${xp} XP</div>` : ''}
+    `;
+    $('toasts').appendChild(t);
+    beep(type === 'bad' ? 220 : type === 'warn' ? 440 : 880, 0.1, 'sine', 0.04);
+    setTimeout(() => {
+      t.style.animation = 'tout .4s forwards';
+      setTimeout(() => t.remove(), 400);
+    }, 4000);
+  }
+  const dot = $('notifDot');
+  if (dot) dot.classList.remove('hidden');
+  renderNotifPanel();
+}
+
+function renderNotifPanel() {
+  const p = $('notifPanel');
+  if (!p || !S) return;
+  if (!S.notifs.length) {
+    p.innerHTML = '<div class="text-mut text-xs text-center py-4 font-mono">NO TRANSMISSIONS</div>';
+    return;
+  }
+  p.innerHTML = `
+    <div class="flex justify-between items-center pb-2 border-b border-white/10 mb-2">
+      <span class="font-orb text-xs font-bold text-neon">TRANSMISSIONS</span>
+      <button onclick="clearNotifs()" class="text-mut hover:text-white text-[10px] font-mono">CLEAR ALL</button>
+    </div>
+  ` + S.notifs.slice(0, 15).map(n => `
+    <div class="py-2 border-b border-white/5 last:border-0">
+      <div class="flex justify-between">
+        <span class="font-mono text-[10px] text-neon">${esc(n.tag)}</span>
+        <span class="font-mono text-[9px] text-mut">${esc(n.time)}</span>
+      </div>
+      <div class="text-xs mt-0.5">${esc(n.msg)}</div>
+      ${n.xp ? `<div class="font-mono text-[10px] text-neon mt-0.5">+${n.xp} XP</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function clearNotifs() {
+  if (S) {
+    S.notifs = [];
+    save();
+    renderNotifPanel();
+  }
+}
+
+function toggleNotifPanel() {
+  const p = $('notifPanel');
+  p.classList.toggle('hidden');
+  $('notifDot').classList.add('hidden');
+  if (S) {
+    S.notifs.forEach(n => n.unread = false);
+    save();
+  }
+  renderNotifPanel();
+}
+
+function floatXP(xp) {
+  const f = $('floatXp');
+  f.textContent = '+' + xp + ' XP';
+  f.classList.remove('hidden');
+  f.style.left = '50%';
+  f.style.top = '40%';
+  f.style.transform = 'translate(-50%, 0)';
+  f.style.opacity = '1';
+  let y = 0;
+  const iv = setInterval(() => {
+    y -= 3;
+    f.style.transform = `translate(-50%, ${y}px)`;
+    f.style.opacity = String(1 + y / 120);
+    if (y < -120) {
+      clearInterval(iv);
+      f.classList.add('hidden');
+    }
+  }, 25);
+}
+
+/* ══════════════════════════════════════════════════
+   6. NAVIGATION & ROUTING
+   ══════════════════════════════════════════════════ */
+const SCREENS = ['screen-landing', 'screen-auth', 'screen-onboarding', 'screen-analysis', 'screen-app'];
+function showScreen(id) {
+  SCREENS.forEach(s => $(s).classList.add('hidden'));
+  $(id).classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+
+const VIEWS = [
+  ['dashboard', 'HOME', '⌂'],
+  ['quests', 'QUESTS', '⬢'],
+  ['roadmap', 'MAP', '◈'],
+  ['stats', 'STATS', '◊'],
+  ['skills', 'SKILLS', '✦'],
+  ['bosses', 'BOSS', '▲'],
+  ['analytics', 'DATA', '◎'],
+  ['history', 'LOG', '≡'],
+  ['profile', 'SELF', '◉'],
+  ['subscription', 'PASS', '◈'],
+  ['settings', 'SYS', '⚙']
+];
+
+function showView(v) {
+  if (!S || !S.onboarded) return;
+  S.view = v;
+  save();
+  $$('.appview').forEach(e => e.classList.add('hidden'));
+  $('view-' + v).classList.remove('hidden');
+  $$('#sideNav .sidebtn').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  $$('#bottomNav .navbtn').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  toggleMore(false);
+  window.scrollTo(0, 0);
+
+  const viewRenderers = {
+    dashboard: renderDashboard,
+    quests: renderQuests,
+    roadmap: renderRoadmap,
+    stats: renderStats,
+    skills: renderSkills,
+    bosses: renderBosses,
+    analytics: renderAnalytics,
+    history: renderHistory,
+    profile: renderProfile,
+    subscription: renderSubscription,
+    settings: renderSettings
+  };
+  (viewRenderers[v] || renderDashboard)();
+}
+
+function buildNav() {
+  $('sideNav').innerHTML = VIEWS.map(([v, l, i]) => `
+    <button class="sidebtn ${S && S.view === v ? 'on' : ''}" data-v="${v}" onclick="showView('${v}')">
+      <span class="w-7 h-7 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center text-neon text-xs">${i}</span>
+      <span class="text-xs tracking-wider">${l}</span>
+      ${v === 'subscription' && S?.sys?.premium ? '<span class="ml-auto text-viol text-xs">◈</span>' : ''}
+    </button>
+  `).join('') + `
+    <button class="sidebtn !text-red-400/80 mt-2" onclick="logout()">
+      <span class="w-7 h-7 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center text-xs">⨯</span>
+      <span class="text-xs">LOGOUT</span>
+    </button>
+  `;
+
+  $('bottomNav').innerHTML = [
+    ['dashboard', 'HOME', '⌂'],
+    ['quests', 'QUEST', '⬢'],
+    ['roadmap', 'MAP', '◈'],
+    ['stats', 'STAT', '◊'],
+    ['more', 'MORE', '⋯']
+  ].map(([v, l, i]) => v === 'more' ? `
+    <button class="navbtn" onclick="toggleMore(true)">
+      <span class="nic text-xs">${i}</span>${l}
+    </button>
+  ` : `
+    <button class="navbtn ${S && S.view === v ? 'on' : ''}" data-v="${v}" onclick="showView('${v}')">
+      <span class="nic text-xs">${i}</span>${l}
+    </button>
+  `).join('');
+
+  $('moreGrid').innerHTML = VIEWS.filter(([v]) => !['dashboard', 'quests', 'roadmap', 'stats'].includes(v)).map(([v, l, i]) => `
+    <button onclick="showView('${v}')" class="p-3 rounded-xl border border-white/10 bg-white/5 text-center hover:border-neon/40 transition">
+      <div class="text-lg text-neon">${i}</div>
+      <div class="font-orb text-[9px] tracking-widest mt-1">${l}</div>
+    </button>
+  `).join('');
+}
+
+function toggleMore(open) {
+  $('moreSheet').classList.toggle('hidden', !open);
+}
+
+/* ══════════════════════════════════════════════════
+   7. AUTHENTICATION & DEMO MODE
+   ══════════════════════════════════════════════════ */
+let authMode = 'signup', selPlan = '1Y';
+
+function pickPlan(p, el) {
+  selPlan = p;
+  $$('.planpick').forEach(x => {
+    x.style.borderColor = 'rgba(0,229,255,.3)';
+    x.style.background = 'transparent';
+    x.classList.remove('ring-1', 'ring-viol');
+  });
+  if (el) {
+    el.style.borderColor = '#A855F7';
+    el.style.background = 'rgba(168,85,247,.15)';
+    el.classList.add('ring-1', 'ring-viol');
+  }
+}
+
+function handleAscend() {
+  if (S && S.user) {
+    showScreen('screen-app');
+    showView('subscription');
+  } else {
+    openAuth('signup');
+  }
+}
+
+function openAuth(m) {
+  authTab(m);
+  showScreen('screen-auth');
+}
+
+function authTab(m) {
+  authMode = m;
+  $('tabSignup').classList.toggle('on', m === 'signup');
+  $('tabLogin').classList.toggle('on', m === 'login');
+  $('authTitle').textContent = m === 'signup' ? 'CREATE ACCOUNT' : 'WELCOME BACK';
+  $('fCallsign').style.display = m === 'signup' ? '' : 'none';
+  $('fConfirm').style.display = m === 'signup' ? '' : 'none';
+  $('fAgree').style.display = m === 'signup' ? '' : 'none';
+  $('authGo').textContent = m === 'signup' ? 'Create Account' : 'Login to System';
+  $('authErr').classList.add('hidden');
+}
+
+function authError(m) {
+  const e = $('authErr');
+  e.textContent = m;
+  e.classList.remove('hidden');
+  e.style.animation = 'shake .4s';
+  setTimeout(() => e.style.animation = '', 400);
+}
+
+function submitAuth() {
+  const email = $('aEmail').value.trim().toLowerCase(), pass = $('aPass').value;
+  if (!/^\S+@\S+\.\S+$/.test(email)) return authError('Please enter a valid email address.');
+  if (pass.length < 6) return authError('Password must contain at least 6 characters.');
+
+  let users = {};
+  try { users = JSON.parse(localStorage.getItem('ls_users') || '{}'); } catch (e) {}
+
+  if (authMode === 'signup') {
+    const user = $('aUser').value.trim() || email.split('@')[0];
+    if (user.length < 2) return authError('Choose a callsign (2+ characters).');
+    if ($('aPass2').value !== pass) return authError('Passwords do not match.');
+    if (!$('aAgree').checked) return authError('Please accept Terms & Privacy to continue.');
+    if (users[email]) return authError('An account with this email already exists. Switch to Login.');
+
+    users[email] = { user, pass: hashStr(pass + '::ls-salt'), created: Date.now() };
+    localStorage.setItem('ls_users', JSON.stringify(users));
+
+    S = defaultState();
+    S.user = { email, name: user.toUpperCase().replace(/\s+/g, '_').slice(0, 18), created: Date.now() };
+    save();
+    notify('ACCOUNT CREATED', 'Welcome, ' + S.user.name + '. System calibration required.', 'viol');
+    startOnboarding();
+  } else {
+    const u = users[email];
+    if (!u || u.pass !== hashStr(pass + '::ls-salt')) return authError('Invalid credentials. Check email & password.');
+
+    S = load();
+    if (!S || !S.user || S.user.email !== email) {
+      S = defaultState();
+      S.user = { email, name: u.user.toUpperCase().replace(/\s+/g, '_').slice(0, 18), created: u.created };
+      save();
+    }
+    notify('ACCESS GRANTED', 'Welcome back, ' + S.user.name + '.', 'good');
+    if (S.onboarded) {
+      enterApp();
+    } else {
+      startOnboarding();
+    }
+  }
+}
+
+function enterDemo() {
+  S = defaultState();
+  S.user = { email: 'demo@system.local', name: 'DEMO_HUNTER', demo: true, created: Date.now() };
+  S.profile = demoProfile();
+  S.sys = generateSystem(S.profile);
+  S.sys.stats = { STR: 8, INT: 10, FOC: 7, DISC: 9, CRE: 6, SKL: 9, STA: 7 };
+  S.sys.level = 3;
+  S.sys.xp = 45;
+  S.sys.streak = 5;
+  S.sys.history = [{ d: todayKey(), t: '[ SYSTEM ] Demo Protocol Initialized', xp: 0 }];
+  S.onboarded = true;
+  save();
+  enterApp();
+  setTimeout(() => {
+    notify('NEW QUEST GENERATED', '5 daily quests materialized.', 'info');
+    setTimeout(() => notify('PROTOCOL TIP', 'XP is scarce. Level requirements grow harder.', 'viol'), 2200);
+  }, 600);
+}
+
+function logout() {
+  save();
+  S = null;
+  showScreen('screen-landing');
+}
+
+function demoProfile() {
+  return {
+    age: '19-22',
+    occupation: 'College Student',
+    education: 'Undergraduate',
+    wake: '06:30',
+    sleep: '23:00',
+    workStart: '09:00',
+    workEnd: '16:00',
+    travel: '30-60m',
+    available: '1-2h',
+    energy: 'Morning',
+    goals: ['coding', 'fitness'],
+    customGoals: ['Ship AI Portfolio Project'],
+    skillLevel: 'Beginner',
+    deadline: '90 days',
+    strengths: ['Consistency when started', 'Curiosity'],
+    weaknesses: ['Phone addiction', 'Overthinking'],
+    habits: 'Gym 3x weekly, occasional tutorial watching',
+    distractions: 'Short-form videos, late-night scrolling',
+    resources: 'Laptop, gym nearby, high-speed internet',
+    constraints: 'Classes 9 AM - 4 PM, family commitments',
+    sleepQ: 'Average',
+    stress: 'Medium'
+  };
+}
+
+/* ══════════════════════════════════════════════════
+   8. ONBOARDING WIZARD
+   ══════════════════════════════════════════════════ */
+let OB = { step: 1, data: { goals: [], customGoals: [], strengths: [], weaknesses: [] } };
+const STRENGTHS = ['Discipline bursts', 'Curiosity', 'Fast learner', 'Consistency when started', 'Creativity', 'Physical energy', 'Calm under pressure', 'Good communicator'];
+const WEAK = ['Phone addiction', 'Procrastination', 'Overthinking', 'Inconsistent sleep', 'No clear plan', 'Perfectionism', 'Easily distracted', 'Low energy slumps'];
+
+function startOnboarding() {
+  OB = { step: 1, data: { goals: [], customGoals: [], strengths: [], weaknesses: [] } };
+  showScreen('screen-onboarding');
+  renderOB();
+}
+
+function renderOB() {
+  $('obStepLabel').textContent = 'STEP ' + OB.step + '/4';
+  $('obBar').style.width = (OB.step * 25) + '%';
+  $('obBack').style.visibility = OB.step === 1 ? 'hidden' : 'visible';
+  $('obNext').textContent = OB.step === 4 ? 'RUN AI ANALYSIS →' : 'Continue →';
+  const d = OB.data;
+  let h = '';
+
+  if (OB.step === 1) {
+    h = `
+      <div class="font-mono text-[10px] tracking-[.3em] text-neon">[ PHASE 01 — IDENTITY ]</div>
+      <h3 class="font-orb font-black text-xl mt-1 mb-6">Who is the player?</h3>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label class="font-mono text-[10px] text-mut tracking-widest">AGE RANGE</label>
+          <select id="o_age" class="inp mt-1">
+            <option>Under 16</option>
+            <option ${d.age === '16-18' ? 'selected' : ''}>16-18</option>
+            <option ${d.age === '19-22' || !d.age ? 'selected' : ''}>19-22</option>
+            <option ${d.age === '23-29' ? 'selected' : ''}>23-29</option>
+            <option ${d.age === '30-39' ? 'selected' : ''}>30-39</option>
+            <option ${d.age === '40+' ? 'selected' : ''}>40+</option>
+          </select>
+        </div>
+        <div>
+          <label class="font-mono text-[10px] text-mut tracking-widest">EDUCATION / WORK</label>
+          <select id="o_occ" class="inp mt-1">
+            ${['High-School Student', 'College Student', 'Employed Full-time', 'Employed Part-time', 'Freelancer', 'Job Seeker', 'Business Owner', 'Other'].map(o => `
+              <option ${d.occupation === o ? 'selected' : ''}>${o}</option>
+            `).join('')}
+          </select>
+        </div>
+        <div>
+          <label class="font-mono text-[10px] text-mut tracking-widest">EDUCATION LEVEL</label>
+          <select id="o_edu" class="inp mt-1">
+            ${['High School', 'Undergraduate', 'Graduate', 'Postgraduate', 'Self-taught', 'Other'].map(o => `
+              <option ${d.education === o ? 'selected' : ''}>${o}</option>
+            `).join('')}
+          </select>
+        </div>
+        <div>
+          <label class="font-mono text-[10px] text-mut tracking-widest">CURRENT SKILL LEVEL (Main Focus)</label>
+          <select id="o_skill" class="inp mt-1">
+            ${['Absolute Beginner', 'Beginner', 'Intermediate', 'Advanced'].map(o => `
+              <option ${d.skillLevel === o ? 'selected' : ''}>${o}</option>
+            `).join('')}
+          </select>
+        </div>
+      </div>
+    `;
+  } else if (OB.step === 2) {
+    h = `
+      <div class="font-mono text-[10px] tracking-[.3em] text-neon">[ PHASE 02 — TIME LATTICE ]</div>
+      <h3 class="font-orb font-black text-xl mt-1 mb-1">Your Real Schedule</h3>
+      <p class="text-mut text-sm mb-6">The System strictly protects sleep, work, commute and recovery. No hallucinated 18-hour grind plans.</p>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div>
+          <label class="font-mono text-[10px] text-mut">WAKE TIME</label>
+          <input type="time" id="o_wake" value="${d.wake || '06:30'}" class="inp mt-1">
+        </div>
+        <div>
+          <label class="font-mono text-[10px] text-mut">SLEEP TIME</label>
+          <input type="time" id="o_sleep" value="${d.sleep || '23:00'}" class="inp mt-1">
+        </div>
+        <div>
+          <label class="font-mono text-[10px] text-mut">WORK/COLLEGE START</label>
+          <input type="time" id="o_ws" value="${d.workStart || '09:00'}" class="inp mt-1">
+        </div>
+        <div>
+          <label class="font-mono text-[10px] text-mut">WORK/COLLEGE END</label>
+          <input type="time" id="o_we" value="${d.workEnd || '17:00'}" class="inp mt-1">
+        </div>
+      </div>
+      <div class="grid sm:grid-cols-3 gap-3 mt-4">
+        <div>
+          <label class="font-mono text-[10px] text-mut">DAILY TRAVEL/COMMUTE</label>
+          <select id="o_travel" class="inp mt-1">
+            ${['None', '30m', '30-60m', '1-2h', '2h+'].map(o => `<option ${d.travel === o ? 'selected' : ''}>${o}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label class="font-mono text-[10px] text-mut">REAL FREE TIME / DAY</label>
+          <select id="o_avail" class="inp mt-1">
+            ${['30m', '30-60m', '1-2h', '2-4h', '4h+'].map(o => `<option ${d.available === o ? 'selected' : ''}>${o}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label class="font-mono text-[10px] text-mut">PEAK ENERGY WINDOW</label>
+          <select id="o_energy" class="inp mt-1">
+            ${['Morning', 'Afternoon', 'Evening', 'Night'].map(o => `<option ${d.energy === o ? 'selected' : ''}>${o}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="mt-4 p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/30 font-mono text-[11px] text-yellow-200">
+        ⚠ Truth over fantasy: Over-promising free hours leads to failed quests and streak breaks. Be conservative.
+      </div>
+    `;
+  } else if (OB.step === 3) {
+    h = `
+      <div class="font-mono text-[10px] tracking-[.3em] text-neon">[ PHASE 03 — OBJECTIVES ]</div>
+      <h3 class="font-orb font-black text-xl mt-1 mb-6">Select 1–3 Primary Goal Pillars</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="goalGrid">
+        ${GOALS.map(g => `
+          <div class="chip text-center !rounded-xl !py-3 ${d.goals.includes(g.id) ? 'on' : ''}" data-g="${g.id}" onclick="toggleArr('goals','${g.id}',3)">
+            <div style="color:${g.color}">${g.icon}</div>
+            <div class="text-xs mt-1 font-semibold">${g.label}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="mt-5">
+        <label class="font-mono text-[10px] text-mut tracking-widest">CUSTOM GOAL SPECIFICATION (Optional)</label>
+        <div class="flex gap-2 mt-1">
+          <input id="o_custom" class="inp" placeholder="e.g. Crack JEE Exam, Build SaaS prototype, 10k Run..." maxlength="60">
+          <button onclick="addCustom()" class="btn-ghost !py-2 shrink-0">+ ADD</button>
+        </div>
+        <div id="customList" class="flex flex-wrap gap-2 mt-2">
+          ${(d.customGoals || []).map((c, i) => `
+            <span class="chip on !text-xs">${esc(c)} <b onclick="delCustom(${i})" class="cursor-pointer ml-1 text-red-300">⨯</b></span>
+          `).join('')}
+        </div>
+      </div>
+      <div class="mt-4">
+        <label class="font-mono text-[10px] text-mut tracking-widest">TARGET DEADLINE / HORIZON</label>
+        <select id="o_dead" class="inp mt-1">
+          ${['30 days', '60 days', '90 days', '6 months', '1 year', 'No hard deadline'].map(o => `
+            <option ${d.deadline === o ? 'selected' : ''}>${o}</option>
+          `).join('')}
+        </select>
+      </div>
+    `;
+  } else if (OB.step === 4) {
+    h = `
+      <div class="font-mono text-[10px] tracking-[.3em] text-neon">[ PHASE 04 — SELF AUDIT ]</div>
+      <h3 class="font-orb font-black text-xl mt-1 mb-6">Strengths, Demons &amp; Constraints</h3>
+      <label class="font-mono text-[10px] text-mut tracking-widest">STRENGTHS (Select active traits)</label>
+      <div class="flex flex-wrap gap-2 mt-1 mb-4">
+        ${STRENGTHS.map(s => `
+          <span class="chip !text-xs ${d.strengths.includes(s) ? 'on' : ''}" onclick="toggleArr('strengths','${s}',99)">${s}</span>
+        `).join('')}
+      </div>
+      <label class="font-mono text-[10px] text-mut tracking-widest">WEAKNESSES / TOP DEMONS</label>
+      <div class="flex flex-wrap gap-2 mt-1 mb-4">
+        ${WEAK.map(s => `
+          <span class="chip !text-xs ${d.weaknesses.includes(s) ? 'on' : ''}" onclick="toggleArr('weaknesses','${s}',99)">${s}</span>
+        `).join('')}
+      </div>
+      <div class="grid sm:grid-cols-2 gap-3">
+        <div>
+          <label class="font-mono text-[10px] text-mut">EXISTING HABITS</label>
+          <textarea id="o_hab" class="inp mt-1" rows="2" placeholder="What routine do you already hold?">${esc(d.habits || '')}</textarea>
+        </div>
+        <div>
+          <label class="font-mono text-[10px] text-mut">PRIMARY DISTRACTIONS</label>
+          <textarea id="o_dist" class="inp mt-1" rows="2" placeholder="Reels, binge gaming, overthinking...">${esc(d.distractions || '')}</textarea>
+        </div>
+        <div>
+          <label class="font-mono text-[10px] text-mut">RESOURCES AVAILABLE</label>
+          <textarea id="o_res" class="inp mt-1" rows="2" placeholder="Laptop, books, gym membership, mentors...">${esc(d.resources || '')}</textarea>
+        </div>
+        <div>
+          <label class="font-mono text-[10px] text-mut">HARD CONSTRAINTS</label>
+          <textarea id="o_con" class="inp mt-1" rows="2" placeholder="Commute, family dinners, exam weeks...">${esc(d.constraints || '')}</textarea>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3 mt-3">
+        <div>
+          <label class="font-mono text-[10px] text-mut">SLEEP QUALITY</label>
+          <select id="o_sq" class="inp mt-1">
+            ${['Poor', 'Average', 'Good', 'Excellent'].map(o => `<option ${d.sleepQ === o ? 'selected' : ''}>${o}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label class="font-mono text-[10px] text-mut">STRESS LEVEL</label>
+          <select id="o_st" class="inp mt-1">
+            ${['Low', 'Medium', 'High', 'Burned out'].map(o => `<option ${d.stress === o ? 'selected' : ''}>${o}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+    `;
+  }
+  $('obBody').innerHTML = h;
+}
+
+function toggleArr(k, v, max) {
+  const a = OB.data[k];
+  const i = a.indexOf(v);
+  if (i >= 0) a.splice(i, 1);
+  else {
+    if (a.length >= max) { beep(220, 0.1); return; }
+    a.push(v);
+  }
+  renderOB();
+}
+
+function addCustom() {
+  const v = $('o_custom').value.trim();
+  if (!v) return;
+  OB.data.customGoals = OB.data.customGoals || [];
+  if (OB.data.customGoals.length >= 3) return;
+  OB.data.customGoals.push(v);
+  renderOB();
+}
+
+function delCustom(i) {
+  OB.data.customGoals.splice(i, 1);
+  renderOB();
+}
+
+function collectOB() {
+  const d = OB.data;
+  if (OB.step === 1) {
+    d.age = $('o_age')?.value;
+    d.occupation = $('o_occ')?.value;
+    d.education = $('o_edu')?.value;
+    d.skillLevel = $('o_skill')?.value;
+  } else if (OB.step === 2) {
+    d.wake = $('o_wake')?.value;
+    d.sleep = $('o_sleep')?.value;
+    d.workStart = $('o_ws')?.value;
+    d.workEnd = $('o_we')?.value;
+    d.travel = $('o_travel')?.value;
+    d.available = $('o_avail')?.value;
+    d.energy = $('o_energy')?.value;
+  } else if (OB.step === 3) {
+    d.deadline = $('o_dead')?.value;
+  } else if (OB.step === 4) {
+    d.habits = $('o_hab')?.value;
+    d.distractions = $('o_dist')?.value;
+    d.resources = $('o_res')?.value;
+    d.constraints = $('o_con')?.value;
+    d.sleepQ = $('o_sq')?.value;
+    d.stress = $('o_st')?.value;
+  }
+}
+
+function obNav(dir) {
+  collectOB();
+  if (dir === 1 && OB.step === 3 && !OB.data.goals.length && !(OB.data.customGoals || []).length) {
+    notify('SELECT AT LEAST 1 GOAL', 'The System requires a calibrated target.', 'warn');
+    beep(220, 0.15);
+    return;
+  }
+  if (dir === 1 && OB.step < 4) {
+    OB.step++;
+    renderOB();
+    window.scrollTo(0, 0);
+    beep(660, 0.07);
+  } else if (dir === -1 && OB.step > 1) {
+    OB.step--;
+    renderOB();
+    window.scrollTo(0, 0);
+  } else if (dir === 1 && OB.step === 4) {
+    runAnalysis();
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   9. AI SYSTEM GENERATION ENGINE
+   ══════════════════════════════════════════════════ */
+function availMin(a) {
+  return { '30m': 25, '30-60m': 45, '1-2h': 90, '2-4h': 150, '4h+': 240 }[a] || 60;
+}
+function goalLabel(id) {
+  const g = GOALS.find(x => x.id === id);
+  return g ? g.label : id;
+}
+
+function generateSystem(p) {
+  const mins = availMin(p.available);
+  const goals = (p.goals && p.goals.length) ? p.goals : ['mindset'];
+  const diffMult = p.skillLevel === 'Absolute Beginner' || p.skillLevel === 'Beginner' ? 0.8 : p.skillLevel === 'Advanced' ? 1.25 : 1;
+  const stressCut = p.stress === 'Burned out' || p.stress === 'High' ? 0.75 : p.stress === 'Low' ? 1.1 : 1;
+  const budget = Math.floor(mins * diffMult * stressCut);
+
+  // 1. Daily Quests Pool Calibration
+  let pool = [];
+  goals.forEach(g => {
+    const list = QBANK[g] || QBANK.general;
+    list.forEach(q => pool.push({ g, title: q[0], stat: q[1], min: q[2], xp: q[3] }));
+  });
+  pool.sort(() => Math.random() - 0.5);
+
+  let daily = [], used = 0;
+  for (const q of pool) {
+    if (daily.length >= 5) break;
+    if (used + q.min <= budget + 20) {
+      daily.push({
+        id: uid(),
+        title: q.title,
+        stat: q.stat,
+        min: q.min,
+        xp: q.xp,
+        goal: q.g,
+        done: false,
+        date: todayKey(),
+        diff: q.xp <= 2 ? 'EASY' : q.xp <= 4 ? 'MEDIUM' : 'HARD'
+      });
+      used += q.min;
+    }
+  }
+  // Guarantee consistency anchor quest
+  if (!daily.find(q => q.stat === 'STA')) {
+    daily.push({
+      id: uid(),
+      title: 'Hold target sleep window (' + fmtTime(p.sleep) + ')',
+      stat: 'STA',
+      min: 5,
+      xp: 3,
+      goal: 'mindset',
+      done: false,
+      date: todayKey(),
+      diff: 'MEDIUM'
+    });
+  }
+  daily = daily.slice(0, 5);
+
+  if (p.stress === 'Burned out') {
+    daily.push({
+      id: uid(),
+      title: 'Restorative Protocol: 15-min walk + digital sunset',
+      stat: 'STA',
+      min: 15,
+      xp: 2,
+      goal: 'mindset',
+      done: false,
+      date: todayKey(),
+      diff: 'EASY',
+      rec: true
+    });
+  }
+
+  // 2. Weekly Missions
+  const weekly = goals.slice(0, 3).map(g => ({
+    id: uid(),
+    title: WBANK[g] || WBANK.general,
+    goal: g,
+    xp: 8 + Math.floor(Math.random() * 5),
+    done: false,
+    progress: 0,
+    total: 4,
+    diff: 'WEEKLY'
+  }));
+
+  // 3. Boss Gates
+  const bosses = BBOSS.map((b, i) => ({
+    id: uid(),
+    name: b[0],
+    desc: b[1],
+    phases: b[2].map(t => ({ t, done: false })),
+    xp: b[3],
+    month: i + 1,
+    claimed: false
+  }));
+
+  // 4. Time Lattice Schedule
+  const sched = buildSchedule(p, budget);
+
+  // 5. Roadmaps (7D, 30D, 90D, 6M, 1Y)
+  const road = {
+    d7: build7(p, goals),
+    d30: build30(p, goals),
+    d90: build90(p, goals),
+    m6: build6(p, goals),
+    y1: buildY(p, goals)
+  };
+
+  // 6. Base Stats
+  const stats = { STR: 5, INT: 5, FOC: 5, DISC: 5, CRE: 5, SKL: 5, STA: 5 };
+  (p.strengths || []).forEach(s => {
+    if (/energy|physical/i.test(s)) stats.STR += 3;
+    if (/learn|curiosity/i.test(s)) stats.INT += 2;
+    if (/consist/i.test(s)) stats.STA += 3;
+    if (/creativ/i.test(s)) stats.CRE += 3;
+    if (/discipline/i.test(s)) stats.DISC += 3;
+    if (/calm|pressure/i.test(s)) stats.FOC += 2;
+  });
+  if (p.skillLevel === 'Intermediate') { stats.SKL += 3; stats.INT += 2; }
+  if (p.skillLevel === 'Advanced') { stats.SKL += 5; stats.INT += 3; stats.DISC += 2; }
+  Object.keys(stats).forEach(k => stats[k] = clamp(stats[k] + Math.floor(Math.random() * 2), 4, 15));
+
+  // 7. Habits & Recovery
+  const habits = buildHabits(p, goals);
+  const recovery = buildRecovery(p);
+
+  return {
+    level: 1,
+    xp: 0,
+    totalXp: 0,
+    sp: 0,
+    streak: 0,
+    lastActive: null,
+    stats,
+    statsF: { ...stats },
+    daily,
+    weekly,
+    bosses,
+    sched,
+    road,
+    habits,
+    recovery,
+    unlocked: ['WILL-0'],
+    history: [{ d: todayKey(), t: '[ SYSTEM ] Protocol calibrated for ' + (goals.map(goalLabel).join(' + ') || 'growth'), xp: 0 }],
+    xpLog: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    completions: 0,
+    premium: false,
+    plan: null,
+    premiumSince: null,
+    difficulty: 'Standard',
+    recoveryMode: p.stress === 'Burned out',
+    heat: Array.from({ length: 28 }, () => Math.random() < 0.35 ? Math.floor(Math.random() * 4) : 0)
+  };
+}
+
+function buildSchedule(p, budget) {
+  const deep = Math.min(budget, Math.round(budget * 0.65)), micro = budget - deep;
+  const peak = p.energy || 'Morning';
+  return [
+    { time: p.wake, title: 'Wake + Sunlight + Hydrate', type: 'wake', note: 'No phone 20 min. Glass of water + light.' },
+    { time: addMin(p.wake, 20), title: 'Ignition Block (10 min)', type: 'mind', note: 'Set 3 focus anchors · brief stretch.' },
+    { time: p.workStart, title: p.occupation + ' Window', type: 'work', note: 'Protected time lattice. System never interrupts.' },
+    { time: p.workEnd, title: 'Decompress & Fuel (20 min)', type: 'rest', note: 'Walk, healthy snack, mental reset.' },
+    { time: addMin(p.workEnd, 30), title: 'Deep Work Block — ' + deep + ' min (' + peak + ' peak)', type: 'deep', note: 'Primary goal focus. 25/5 Pomodoro cadence.' },
+    ...(micro >= 15 ? [{ time: addMin(p.workEnd, 30 + deep + 10), title: 'Micro Drill — ' + micro + ' min', type: 'deep', note: 'Secondary skill drill or review.' }] : []),
+    { time: subMin(p.sleep, 60), title: 'Digital Sunset Wind-Down', type: 'rest', note: 'Screens off · journal · prepare tomorrow.' },
+    { time: p.sleep, title: 'Sleep Window — Non-negotiable', type: 'sleep', note: 'Target 7-8h restorative sleep.' }
+  ];
+}
+
+function addMin(t, m) {
+  let [h, mi] = (t || '08:00').split(':').map(Number);
+  let d = h * 60 + mi + m;
+  if (d < 0) d += 1440;
+  return String(Math.floor(d / 60) % 24).padStart(2, '0') + ':' + String(d % 60).padStart(2, '0');
+}
+function subMin(t, m) { return addMin(t, -m); }
+
+function build7(p, goals) {
+  const g = goals[0] || 'general';
+  const label = goalLabel(g);
+  return Array.from({ length: 7 }, (_, i) => ({
+    day: 'DAY ' + (i + 1),
+    focus: i === 0 ? 'Baseline Calibration' : i === 6 ? 'Weekly Debrief & Deload' : (label + ' — Deep Rep #' + i),
+    tasks: [
+      (QBANK[g]?.[i % QBANK[g].length]?.[0] || 'Core Rep 20 min'),
+      'Hold morning phone-free buffer',
+      'Log quest completion before ' + fmtTime(p.sleep)
+    ]
+  }));
+}
+
+function build30(p, goals) {
+  return [1, 2, 3, 4].map(w => ({
+    week: 'WEEK ' + w,
+    title: ['Foundation & Habit Locking', 'Volume Scaling', 'Intensity Push', 'Consolidation & Boss Gate'][w - 1],
+    target: w === 1 ? 'Solidify daily quest completion at 70% load' : w === 2 ? 'Push to 85% completion, log streak' : w === 3 ? 'Execute weekly stretch mission' : 'Deload 20%, complete Boss gate review',
+    xp: '+' + (45 + w * 12) + ' XP Potential'
+  }));
+}
+
+function build90(p, goals) {
+  return [
+    ['Phase I (Days 1–30) — IGNITION', 'Habit loop hardcoded. Baseline skill capability increased.'],
+    ['Phase II (Days 31–60) — ACCELERATION', 'Doubling execution speed. Tangible milestone artifact created.'],
+    ['Phase III (Days 61–90) — BREAKTHROUGH', 'Peak performance push toward ' + (p.deadline || '90-day') + ' objective.']
+  ].map(([t, d], i) => ({
+    phase: t,
+    desc: d,
+    milestones: goals.map(g => milestone(g, i))
+  }));
+}
+
+function milestone(g, i) {
+  const m = {
+    fitness: ['Workout consistency 22/30 days', 'Strength metric +15%', 'Peak stamina & physique tone'],
+    coding: ['Build & ship 3 core prototypes', '40 algorithmic logic drills', 'Full portfolio deployment'],
+    study: ['Complete 35% syllabus + flashcards', '75% syllabus + 5 timed mocks', 'Full mock score target reached'],
+    career: ['15 target outreach applications', 'Portfolio reviews + interviews', 'Target offer pipeline secured'],
+    language: ['400 high-frequency words', '15 conversation monologue reps', 'Fluent B1 conversational ability'],
+    business: ['First 3 customer problem audits', 'Offer v2 iteration & funnel', 'First validated revenue milestone'],
+    creative: ['15 published micro-pieces', 'Unique voice/style established', 'Capstone creative drop'],
+    mindset: ['30-day streak locked', 'Distraction impulse mastered', 'Identity level-up anchored']
+  };
+  return goalLabel(g) + ': ' + (m[g]?.[i] || 'Milestone Tier ' + (i + 1));
+}
+
+function build6(p, goals) {
+  return [
+    'Month 1 — Habit Architecture',
+    'Month 2 — Skill Velocity',
+    'Month 3 — Proof & Output',
+    'Month 4 — Leverage & Speed',
+    'Month 5 — Mastery Push',
+    'Month 6 — Final Horizon Harvest'
+  ].map((t, i) => ({
+    m: t,
+    focus: goals.map(g => goalLabel(g) + ' Lv.' + (i + 1)).join(' · '),
+    out: ['Habit lattice stabilized', 'Daily velocity doubled', 'First undeniable public artifact', 'Opportunities expanding', 'Advanced execution', 'Target goal 80–100% achieved'][i]
+  }));
+}
+
+function buildY(p, goals) {
+  return [
+    ['Q1 — THE FOUNDATION', 'Systems, basic habits, initial momentum.'],
+    ['Q2 — THE CRUCIBLE', 'Volume ramp, evidence, tangible portfolio.'],
+    ['Q3 — THE LEAP', 'Competing at higher tiers, network leverage.'],
+    ['Q4 — TRANSCENDENCE', 'Top 5% trajectory locked. New identity reality.']
+  ].map(([q, d]) => ({ q, d, goals: goals.map(goalLabel).join(' + ') }));
+}
+
+function buildHabits(p, goals) {
+  const h = [{ t: 'Digital sunset 60m before sleep', w: 'Protects circadian sleep window (' + fmtTime(p.sleep) + ')' }];
+  if ((p.weaknesses || []).includes('Phone addiction')) {
+    h.push({ t: 'Charge phone outside the bedroom', w: 'Destroys late-night scroll reflex instantly' });
+  }
+  if ((p.weaknesses || []).includes('Inconsistent sleep')) {
+    h.push({ t: 'Fixed wake-up time ±30m on weekends', w: 'Anchors energy rhythm permanently' });
+  }
+  h.push({ t: (p.energy || 'Morning') + ' deep work protected daily', w: 'Aligns hardest cognitive tasks with energy peaks' });
+  goals.slice(0, 2).forEach(g => {
+    h.push({ t: 'Daily ' + goalLabel(g) + ' minimum 15m rep', w: 'Never-zero rule defeats all lack of motivation' });
+  });
+  h.push({ t: 'Weekly debrief & planning (Sunday 20m)', w: 'The System continuously self-corrects from data' });
+  return h.slice(0, 6);
+}
+
+function buildRecovery(p) {
+  return {
+    status: p.stress === 'Burned out' ? 'RECOVERY MODE ACTIVE' : p.sleepQ === 'Poor' ? 'SLEEP REPAIR ADVISED' : 'OPTIMAL ENERGY',
+    steps: [
+      'Maintain strict sleep window ' + fmtTime(p.wake) + ' → ' + fmtTime(p.sleep) + ' (7.5h+ goal)',
+      '1 complete recovery day per week (zero grind guilt)',
+      'Deload week scheduled every 4th cycle (-30% volume)',
+      '15 minutes daily outdoors walking + natural sunlight',
+      'Auto-recovery safety fallback: light quests engaged on high fatigue'
+    ],
+    warn: 'Safe protocols only: XP pauses, light restorative quests. Never extreme training, starvation, sleep deprivation or self-punishment.'
+  };
+}
+
+/* ══════════════════════════════════════════════════
+   10. AI ANALYSIS ANIMATION SEQUENCE
+   ══════════════════════════════════════════════════ */
+function runAnalysis() {
+  showScreen('screen-analysis');
+  const phases = [
+    'PARSING CHRONOTYPE & WAKE/SLEEP LATTICE ...',
+    'MAPPING HARD CONSTRAINTS & WORK BLOCKS ...',
+    'PROTECTING RESTORATIVE RECOVERY SLEEP ...',
+    'FORGING TIME-BOUND DAILY QUESTS ...',
+    'CALIBRATING XP PROGRESSION CURVE ...',
+    'BUILDING 7D → 1Y ADAPTIVE ROADMAP ...',
+    'FINALIZING OPERATING SYSTEM PROTOCOL ...'
+  ];
+  const logs = [
+    '✓ Wake: ' + ($('o_wake')?.value || '06:30') + ' · Sleep: ' + ($('o_sleep')?.value || '23:00') + ' · Available: ' + OB.data.available,
+    '✓ Primary Objectives: ' + (OB.data.goals.map(goalLabel).join(', ') || 'General Growth') + (OB.data.customGoals?.length ? ' + Custom Goals' : ''),
+    '✓ Work/College time block locked: Zero quest collisions',
+    '✓ Quest load calibrated strictly under ' + availMin(OB.data.available) + ' mins (15% safety buffer)',
+    '✓ XP economy calibrated: +1..+6 daily quests · +8..+15 weekly triumphs',
+    '✓ Recovery lattice configured (circadian debt protection active)',
+    '✓ Multi-tier roadmap generated: 7D · 30D · 90D · 6M · 1Y',
+    '✓ Skill branches initialized for ' + (OB.data.skillLevel || 'Beginner'),
+    '[ SYSTEM ] CALIBRATION SUCCESSFUL. PROTOCOL READY.'
+  ];
+
+  let i = 0;
+  $('anLog').innerHTML = '';
+  $('anBar').style.width = '0%';
+
+  const iv = setInterval(() => {
+    if (i < phases.length) {
+      $('anPhase').textContent = phases[i];
+      $('anLog').innerHTML += `<div class="text-neon/90">${esc(logs[i] || ' Calibrating parameter matrix...')}</div>`;
+      $('anLog').scrollTop = 999;
+      const pc = Math.round(((i + 1) / phases.length) * 100);
+      $('anPct').textContent = pc + '%';
+      $('anBar').style.width = pc + '%';
+      beep(520 + i * 80, 0.05, 'square', 0.02);
+      i++;
+    } else {
+      clearInterval(iv);
+      setTimeout(() => {
+        S.profile = { ...OB.data };
+        S.sys = generateSystem(S.profile);
+        S.onboarded = true;
+        save();
+        enterApp();
+        notify('NEW QUEST GENERATED', S.sys.daily.length + ' calibrated daily quests ready.', 'info');
+        setTimeout(() => notify('PROTOCOL ACTIVE', 'Your roadmap is live. Execute with precision.', 'viol'), 1600);
+      }, 500);
+    }
+  }, 650);
+}
+
+/* ══════════════════════════════════════════════════
+   11. APP SHELL & ENGINE
+   ══════════════════════════════════════════════════ */
+function enterApp() {
+  showScreen('screen-app');
+  buildNav();
+  ensureToday();
+  updateHUD();
+  showView('dashboard');
+  if (S?.sys?.recoveryMode) {
+    setTimeout(() => notify('RECOVERY MODE ENGAGED', 'Reduced load active. Restore energy first.', 'warn'), 1000);
+  }
+}
+
+function ensureToday() {
+  const t = todayKey();
+  const sys = S?.sys;
+  if (!sys) return;
+
+  if (sys.daily.length && sys.daily[0].date !== t) {
+    const done = sys.daily.filter(q => q.done).length;
+    const rate = sys.daily.length ? done / sys.daily.length : 0;
+
+    if (rate < 0.35 && sys.streak > 0) {
+      sys.streak = 0;
+      sys.xp = Math.max(0, sys.xp - 5);
+      notify('CONSISTENCY DECLINING', 'Streak broken. -5 XP. Today is a clean slate.', 'bad');
+    } else if (rate < 0.7) {
+      notify('CONSISTENCY WARNING', 'Yesterday completed at ' + Math.round(rate * 100) + '%. Tighten focus.', 'warn');
+    }
+
+    sys.heat.push(done > 0 ? Math.min(4, done) : 0);
+    sys.heat = sys.heat.slice(-28);
+    sys.xpLog.push(0);
+    sys.xpLog = sys.xpLog.slice(-14);
+
+    const p = S.profile;
+    const fresh = generateSystem(p);
+    sys.daily = fresh.daily;
+    save();
+    notify('NEW QUEST GENERATED', 'Fresh daily missions for ' + t, 'info');
+  }
+  updateHUD();
+}
+
+function updateHUD() {
+  if (!S?.sys) return;
+  const sys = S.sys;
+  const req = levelReq(sys.level);
+  $('hudName').textContent = S.user.name;
+  $('hudLvl').textContent = 'LV ' + sys.level;
+  $('hudXp').style.width = clamp((sys.xp / req) * 100, 0, 100) + '%';
+  $('hudXpT').textContent = sys.xp + ' / ' + req + ' XP';
+  const r = rankFor(sys.level);
+  $('hudRank').textContent = r;
+  $('hudRank').className = 'font-orb font-black text-xs px-2 py-0.5 rounded border border-white/10 bg-white/5 rank-' + r;
+  $('hudStreak').textContent = sys.streak;
+  $('hudSP').textContent = sys.sp;
+  $('hudAvatar').textContent = S.user.name[0] || 'P';
+  $('hudPrem').classList.toggle('hidden', !sys.premium);
+
+  const sp = $('sidePlan');
+  if (sp) sp.innerHTML = sys.premium ? `<span class="text-viol font-bold">◈ PREMIUM · ${sys.plan || 'ACTIVE'}</span>` : 'FREE TIER';
+  const ub = $('sideUpBtn');
+  if (ub) ub.textContent = sys.premium ? 'Manage ◈' : 'Ascend ◈';
+  buildNavLite();
+}
+
+function buildNavLite() {
+  $$('#sideNav .sidebtn').forEach(b => b.classList.toggle('on', b.dataset.v === S.view));
+  $$('#bottomNav .navbtn').forEach(b => b.classList.toggle('on', b.dataset.v === S.view));
+}
+
+function addXP(n, reason) {
+  const sys = S.sys;
+  if (!sys) return;
+  sys.xp += n;
+  sys.totalXp += n;
+  sys.xpLog[sys.xpLog.length - 1] += n;
+  sys.history.unshift({ d: todayKey(), t: reason, xp: n });
+  floatXP(n);
+  beep(980, 0.1, 'sine', 0.05);
+
+  let req = levelReq(sys.level);
+  let ups = 0;
+  while (sys.xp >= req) {
+    sys.xp -= req;
+    sys.level++;
+    sys.sp++;
+    ups++;
+    req = levelReq(sys.level);
+  }
+  save();
+  updateHUD();
+
+  if (ups > 0) {
+    showLevelUp(ups);
+  } else {
+    const v = S.view;
+    if (['dashboard', 'quests', 'stats', 'analytics'].includes(v)) showView(v);
+  }
+}
+
+function showLevelUp(n) {
+  const sys = S.sys;
+  const r = rankFor(sys.level);
+  $('lvlNum').textContent = sys.level;
+  $('lvlRank').textContent = 'RANK ' + r + ' · +' + n + ' SKILL POINT' + (n > 1 ? 'S' : '');
+  $('lvlRewards').innerHTML = `
+    <div class="p-2.5 rounded bg-white/5 border border-white/10 text-cyan-400 font-bold">+${n} SP</div>
+    <div class="p-2.5 rounded bg-white/5 border border-white/10 text-yellow-300 font-bold">${rankName(r).split(' — ')[1] || r}</div>
+    <div class="p-2.5 rounded bg-white/5 border border-white/10 text-purple-300 font-bold">NEW QUESTS</div>
+  `;
+  $('lvlOverlay').classList.remove('hidden');
+  beep(660, 0.15, 'sawtooth', 0.04);
+  setTimeout(() => beep(880, 0.2, 'sawtooth', 0.04), 140);
+  notify('LEVEL UP', 'Reached LV ' + sys.level + ' · Rank ' + r + '.', 'good');
+  sys.history.unshift({ d: todayKey(), t: '[ SYSTEM ] LEVEL UP → LV ' + sys.level + ' (' + r + ')', xp: 0 });
+  save();
+}
+
+function closeLvl() {
+  $('lvlOverlay').classList.add('hidden');
+  updateHUD();
+  showView(S.view);
+}
+
+function touchStreak() {
+  const sys = S.sys;
+  const t = todayKey();
+  if (sys.lastActive !== t) {
+    const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+    sys.streak = (sys.lastActive === y) ? sys.streak + 1 : 1;
+    sys.lastActive = t;
+    if (sys.streak === 7) notify('NEW SKILL UNLOCKED', '7-day streak achieved — "Unbreakable" progress.', 'viol');
+    save();
+    updateHUD();
+  }
+}
+
+function toggleQuest(id) {
+  const sys = S.sys;
+  const q = sys.daily.find(x => x.id === id);
+  if (!q) return;
+
+  if (!q.done) {
+    q.done = true;
+    sys.completions++;
+    touchStreak();
+    sys.statsF[q.stat] = Math.min(30, (sys.statsF[q.stat] || 5) + 0.35);
+    sys.stats[q.stat] = Math.floor(sys.statsF[q.stat]);
+    notify('QUEST COMPLETE', q.title, 'good', q.xp);
+    addXP(q.xp, 'Quest: ' + q.title);
+
+    if (sys.daily.every(x => x.done)) {
+      setTimeout(() => {
+        notify('ALL DAILY QUESTS CLEARED', 'Flawless execution. +3 bonus XP.', 'viol', 3);
+        addXP(3, 'Flawless Daily Clear');
+      }, 700);
+    }
+  } else {
+    q.done = false;
+    sys.xp = Math.max(0, sys.xp - q.xp);
+    sys.totalXp = Math.max(0, sys.totalXp - q.xp);
+    save();
+    updateHUD();
+    showView(S.view);
+  }
+}
+
+function toggleWeekly(id) {
+  const q = S.sys.weekly.find(x => x.id === id);
+  if (!q || q.done) return;
+  q.progress++;
+  if (q.progress >= q.total) {
+    q.done = true;
+    touchStreak();
+    notify('WEEKLY MISSION COMPLETE', q.title, 'good', q.xp);
+    addXP(q.xp, 'Weekly: ' + q.title);
+  } else {
+    save();
+    showView(S.view);
+    beep(700, 0.08);
+  }
+}
+
+function toggleBossPhase(bid, pi) {
+  const b = S.sys.bosses.find(x => x.id === bid);
+  if (!b) return;
+  const ph = b.phases[pi];
+  ph.done = !ph.done;
+  const rate = b.phases.filter(p => p.done).length / b.phases.length;
+
+  if (rate === 1 && !b.claimed) {
+    b.claimed = true;
+    notify('BOSS SLAIN', b.name + ' defeated.', 'viol', b.xp);
+    addXP(b.xp, 'Boss Gate: ' + b.name);
+  } else {
+    save();
+    showView(S.view);
+  }
+}
+
+function endDay() {
+  const sys = S.sys;
+  const done = sys.daily.filter(q => q.done).length;
+  openModal(`
+    <div class="font-mono text-[10px] tracking-[.3em] text-neon">[ DAY DEBRIEF ]</div>
+    <h3 class="font-orb font-black text-xl mt-1">Today: ${done}/${sys.daily.length} Quests Cleared</h3>
+    <div class="xpbar my-4">
+      <i class="xpbari" style="width:${sys.daily.length ? (done / sys.daily.length * 100) : 0}%"></i>
+    </div>
+    <p class="text-mut text-sm leading-relaxed">
+      ${done === sys.daily.length ? 'Flawless execution. The System acknowledges your discipline.' : done >= sys.daily.length * 0.6 ? 'Solid performance. Compound tomorrow with zero delay.' : 'Low output detected. Safe protocol applied: light recovery quests ready. No shame — data only.'}
+    </p>
+    <div class="grid grid-cols-2 gap-2 mt-5">
+      <button onclick="closeModal()" class="btn-ghost">Keep Grinding</button>
+      <button onclick="closeModal();notify('DAY SEALED','Rest is part of the protocol. Sleep window protected.','info')" class="btn-sys">Seal The Day</button>
+    </div>
+  `);
+}
+
+/* ══════════════════════════════════════════════════
+   12. VIEW RENDERERS
+   ══════════════════════════════════════════════════ */
+
+// A. DASHBOARD VIEW
+function renderDashboard() {
+  const sys = S.sys, p = S.profile;
+  const req = levelReq(sys.level);
+  const r = rankFor(sys.level);
+  const done = sys.daily.filter(q => q.done).length;
+
+  $('view-dashboard').innerHTML = `
+    <div class="grid lg:grid-cols-3 gap-4">
+      <div class="lg:col-span-2 space-y-4">
+        <!-- Player Card -->
+        <div class="hud p-5 md:p-6">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <div class="font-mono text-[10px] tracking-[.3em] text-neon">[ PLAYER CARD ]</div>
+              <div class="font-orb font-black text-2xl">${esc(S.user.name)}</div>
+              <div class="font-mono text-xs text-mut">${esc(p.occupation || '')} · ${esc((p.goals || []).map(goalLabel).join(' + ') || 'Growth')}</div>
+            </div>
+            <div class="text-center px-4 py-2 rounded-xl border border-viol/40 bg-viol/5">
+              <div class="font-orb font-black text-3xl rank-${r}">${r}</div>
+              <div class="font-mono text-[9px] text-mut">${rankName(r)}</div>
+            </div>
+          </div>
+          <div class="flex justify-between font-mono text-xs mt-4 mb-1">
+            <span>LV ${sys.level}</span>
+            <span class="text-neon">${sys.xp} / ${req} XP</span>
+          </div>
+          <div class="xpbar">
+            <i class="xpbari" style="width:${clamp((sys.xp / req) * 100, 0, 100)}%"></i>
+          </div>
+          <div class="grid grid-cols-4 gap-2 mt-4 text-center">
+            <div class="p-2 rounded-lg bg-white/5 border border-white/10">
+              <div class="font-orb font-bold text-orange-400">${sys.streak}</div>
+              <div class="font-mono text-[8px] text-mut">STREAK</div>
+            </div>
+            <div class="p-2 rounded-lg bg-white/5 border border-white/10">
+              <div class="font-orb font-bold text-neon">${sys.completions}</div>
+              <div class="font-mono text-[8px] text-mut">CLEARS</div>
+            </div>
+            <div class="p-2 rounded-lg bg-white/5 border border-white/10">
+              <div class="font-orb font-bold text-viol">${sys.totalXp}</div>
+              <div class="font-mono text-[8px] text-mut">TOTAL XP</div>
+            </div>
+            <div class="p-2 rounded-lg bg-white/5 border border-white/10">
+              <div class="font-orb font-bold text-green-400">${done}/${sys.daily.length}</div>
+              <div class="font-mono text-[8px] text-mut">TODAY</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Today Quests -->
+        <div class="hud p-5">
+          <div class="flex items-center justify-between mb-3">
+            <span class="font-orb font-bold text-sm tracking-widest text-white">◈ TODAY'S ACTIVE QUESTS</span>
+            <button onclick="showView('quests')" class="font-mono text-[11px] text-neon hover:underline">VIEW ALL →</button>
+          </div>
+          <div class="space-y-2">
+            ${sys.daily.map(q => questRow(q, true)).join('')}
+          </div>
+          ${sys.recoveryMode ? `
+            <div class="mt-3 p-2.5 rounded-lg bg-yellow-500/10 border border-yellow-500/30 font-mono text-[11px] text-yellow-200">
+              ◉ RECOVERY MODE: Light quest load active. Sleep & heal first.
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- Time Schedule Lattice -->
+        <div class="hud p-5">
+          <div class="font-orb font-bold text-sm tracking-widest mb-3">◷ TIME LATTICE <span class="font-mono text-[10px] text-mut font-normal">· respects sleep &amp; work</span></div>
+          <div class="space-y-0">
+            ${sys.sched.map((s, i) => `
+              <div class="flex gap-3 ${i < sys.sched.length - 1 ? 'pb-3 border-l border-neon/20 ml-[5px] pl-5' : 'ml-[5px] pl-5'} relative">
+                <span class="tl-dot absolute -left-[5px] top-1.5" style="${s.type === 'sleep' ? 'background:#A855F7;box-shadow:0 0 10px #A855F7' : s.type === 'deep' ? 'background:#00E5FF' : s.type === 'work' ? 'background:#8B9BB8;box-shadow:none' : 'background:#4ADE80;box-shadow:0 0 10px #4ADE80'}"></span>
+                <div class="flex-1 flex flex-wrap justify-between gap-1">
+                  <div>
+                    <span class="font-mono text-[11px] text-neon">${fmtTime(s.time)}</span>
+                    <span class="font-bold text-sm ml-2">${esc(s.title)}</span>
+                    <div class="text-xs text-mut">${esc(s.note)}</div>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="space-y-4">
+        <!-- Core Stats Matrix -->
+        <div class="hud p-5">
+          <div class="flex justify-between items-center mb-3">
+            <span class="font-orb font-bold text-sm tracking-widest">◊ CORE STATS</span>
+            <button onclick="showView('stats')" class="font-mono text-[10px] text-neon hover:underline">RADAR →</button>
+          </div>
+          ${STATS.map(([k, , c]) => `
+            <div class="mb-2.5">
+              <div class="flex justify-between text-xs font-mono mb-1">
+                <span class="font-bold">${k}</span>
+                <span style="color:${c}">${sys.stats[k]}</span>
+              </div>
+              <div class="statbar">
+                <i class="statbari" style="width:${clamp(sys.stats[k] / 30 * 100, 4, 100)}%;background:${c};box-shadow:0 0 8px ${c}"></i>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <!-- Monthly Boss Gate -->
+        <div class="hud p-5">
+          <div class="font-orb font-bold text-sm tracking-widest mb-3">▲ ACTIVE BOSS GATE</div>
+          ${(() => {
+            const b = sys.bosses.find(x => !x.claimed) || sys.bosses[0];
+            const hp = b.phases.filter(x => x.done).length / b.phases.length;
+            return `
+              <div class="font-bold text-sm">${esc(b.name)}</div>
+              <div class="text-xs text-mut mb-2">${esc(b.desc)}</div>
+              <div class="boss-hp">
+                <i class="boss-hpi" style="width:${(1 - hp) * 100}%"></i>
+              </div>
+              <div class="font-mono text-[10px] text-red-400 mt-1">HP ${Math.round((1 - hp) * 100)}% · Reward +${b.xp} XP</div>
+              <button onclick="showView('bosses')" class="btn-ghost w-full mt-3 !py-2 !border-red-500/40 !text-red-300">Engage Gate →</button>
+            `;
+          })()}
+        </div>
+
+        <!-- Seal The Day -->
+        <div class="hud p-5 text-center">
+          <div class="font-mono text-[10px] text-mut tracking-widest">PROTOCOL DEBRIEF</div>
+          <div class="font-orb font-bold text-sm mt-1 ${sys.recoveryMode ? 'text-yellow-300' : 'text-green-400'}">
+            ${esc(sys.recoveryMode ? 'RECOVERY ACTIVE' : sys.recovery.status)}
+          </div>
+          <button onclick="endDay()" class="btn-sys w-full mt-3 !py-2.5">Seal The Day ◈</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function questRow(q) {
+  const gc = (GOALS.find(g => g.id === q.goal) || {}).color || '#00E5FF';
+  return `
+    <div onclick="toggleQuest('${q.id}')" class="qcard hud !rounded-xl p-3 flex items-center gap-3 ${q.done ? 'done' : ''}">
+      <div class="w-9 h-9 rounded-lg border ${q.done ? 'border-green-400 bg-green-400/15 text-green-400' : 'border-neon/40 bg-neon/5 text-neon'} flex items-center justify-center font-bold text-xs shrink-0">
+        ${q.done ? '✔' : '+' + q.xp}
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="qtitle font-bold text-sm truncate">${esc(q.title)}</div>
+        <div class="flex flex-wrap gap-1.5 mt-1">
+          <span class="font-mono text-[9px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10" style="color:${gc}">${q.stat}</span>
+          <span class="font-mono text-[9px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-mut">~${q.min}m</span>
+          <span class="font-mono text-[9px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-mut">${q.diff || ''}</span>
+          ${q.rec ? '<span class="font-mono text-[9px] px-1.5 py-0.5 rounded bg-green-500/10 border border-green-500/30 text-green-300">RECOVERY</span>' : ''}
+        </div>
+      </div>
+      <div class="font-orb text-[10px] ${q.done ? 'text-green-400' : 'text-mut'} shrink-0">
+        ${q.done ? 'CLEARED' : '+' + q.xp + ' XP'}
+      </div>
+    </div>
+  `;
+}
+
+// B. QUESTS VIEW
+let questTab = 'daily';
+function renderQuests() {
+  const sys = S.sys;
+  const done = sys.daily.filter(q => q.done).length;
+
+  $('view-quests').innerHTML = `
+    <div class="hud p-5 md:p-6 mb-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div class="font-mono text-[10px] tracking-[.3em] text-neon">[ QUEST BOARD ]</div>
+          <div class="font-orb font-black text-xl">EXECUTE. EARN. ASCEND.</div>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="questTab='daily';renderQuests()" class="tabbtn ${questTab === 'daily' ? 'on' : ''}">DAILY (${done}/${sys.daily.length})</button>
+          <button onclick="questTab='weekly';renderQuests()" class="tabbtn ${questTab === 'weekly' ? 'on' : ''}">WEEKLY</button>
+          <button onclick="questTab='recovery';renderQuests()" class="tabbtn ${questTab === 'recovery' ? 'on' : ''}">RECOVERY</button>
+        </div>
+      </div>
+      <div class="xpbar mt-4">
+        <i class="xpbari" style="width:${sys.daily.length ? (done / sys.daily.length * 100) : 0}%"></i>
+      </div>
+    </div>
+
+    ${questTab === 'daily' ? `
+      <div class="space-y-2.5">
+        ${sys.daily.map(q => questRow(q)).join('')}
+      </div>
+      <div class="hud p-4 mt-4 font-mono text-[11px] text-mut">
+        ⚠ Safe penalties only: Missed days pause streaks & dip XP slightly. No harsh or destructive mechanics exist in this System.
+      </div>
+      <button onclick="endDay()" class="btn-sys w-full mt-3">Seal The Day ◈</button>
+    ` : ''}
+
+    ${questTab === 'weekly' ? `
+      <div class="space-y-3">
+        ${sys.weekly.map(q => `
+          <div class="hud !rounded-xl p-4 ${q.done ? 'opacity-60' : ''}">
+            <div class="flex justify-between gap-2">
+              <div class="font-bold">${esc(q.title)}</div>
+              <div class="font-orb text-neon text-sm shrink-0">+${q.xp} XP</div>
+            </div>
+            <div class="font-mono text-[11px] text-mut mt-1">${esc(goalLabel(q.goal))} · Progress ${q.progress}/${q.total}</div>
+            <div class="statbar mt-2">
+              <i class="statbari" style="width:${q.progress / q.total * 100}%;background:linear-gradient(90deg,#00E5FF,#A855F7)"></i>
+            </div>
+            ${q.done ? `
+              <div class="text-green-400 font-bold text-sm mt-2">✔ MISSION COMPLETED</div>
+            ` : `
+              <button onclick="toggleWeekly('${q.id}')" class="btn-ghost w-full mt-3 !py-2">Log Progress (+1/4)</button>
+            `}
+          </div>
+        `).join('')}
+      </div>
+    ` : ''}
+
+    ${questTab === 'recovery' ? `
+      <div class="hud p-5">
+        <div class="font-orb font-bold mb-1">◉ ${esc(sys.recovery.status)}</div>
+        <p class="text-mut text-sm mb-4">${esc(sys.recovery.warn)}</p>
+        ${sys.recovery.steps.map((s, i) => `
+          <div class="flex gap-3 items-start p-3 rounded-lg bg-white/[.03] border border-white/5 mb-2">
+            <span class="font-orb text-neon font-bold text-xs">0${i + 1}</span>
+            <span class="text-sm">${esc(s)}</span>
+          </div>
+        `).join('')}
+        <div class="grid grid-cols-2 gap-2 mt-3">
+          <button onclick="notify('RECOVERY LOGGED','+2 XP. Rest is training.','good',2);addXP(2,'Recovery Walk')" class="btn-ghost !py-2.5">+ Walk 15 min (+2)</button>
+          <button onclick="notify('RECOVERY LOGGED','+2 XP. Sleep held.','good',2);addXP(2,'Sleep On Time')" class="btn-ghost !py-2.5">+ Sleep on Time (+2)</button>
+        </div>
+      </div>
+    ` : ''}
+  `;
+}
+
+// C. ROADMAP VIEW
+let roadTab = 'd7';
+function renderRoadmap() {
+  const sys = S.sys;
+  const T = roadTab;
+  const locked = !sys.premium && ['m6', 'y1', 'd90'].includes(T);
+  let inner = '';
+
+  if (T === 'd7') {
+    inner = sys.road.d7.map(d => `
+      <div class="hud !rounded-xl p-4">
+        <div class="font-orb font-bold text-sm text-neon">${d.day}</div>
+        <div class="font-bold text-sm mt-1">${esc(d.focus)}</div>
+        <div class="text-xs text-mut mt-1">${d.tasks.map(esc).join(' · ')}</div>
+      </div>
+    `).join('');
+  } else if (T === 'd30') {
+    inner = sys.road.d30.map(w => `
+      <div class="hud !rounded-xl p-4">
+        <div class="font-mono text-[10px] text-viol">${w.week}</div>
+        <div class="font-orb font-bold">${w.title}</div>
+        <div class="text-sm mt-1">${esc(w.target)}</div>
+        <div class="font-mono text-[11px] text-neon mt-1">${w.xp}</div>
+      </div>
+    `).join('');
+  } else if (T === 'd90') {
+    inner = sys.road.d90.map(p => `
+      <div class="hud !rounded-xl p-4">
+        <div class="font-orb font-bold text-neon text-sm">${p.phase}</div>
+        <div class="text-xs text-mut mt-1">${esc(p.desc)}</div>
+        <div class="mt-2 space-y-1">
+          ${p.milestones.map(m => `<div class="font-mono text-[11px] text-white/90">◆ ${esc(m)}</div>`).join('')}
+        </div>
+      </div>
+    `).join('');
+  } else if (T === 'm6') {
+    inner = sys.road.m6.map(m => `
+      <div class="hud !rounded-xl p-4">
+        <div class="font-orb font-bold text-sm">${m.m}</div>
+        <div class="text-xs text-mut">${esc(m.focus)}</div>
+        <div class="text-xs mt-1 text-cyan-300">→ ${esc(m.out)}</div>
+      </div>
+    `).join('');
+  } else if (T === 'y1') {
+    inner = sys.road.y1.map(q => `
+      <div class="hud !rounded-xl p-4">
+        <div class="font-orb font-bold text-viol">${q.q}</div>
+        <div class="text-sm mt-1">${esc(q.d)}</div>
+        <div class="font-mono text-[11px] text-mut mt-1">${esc(q.goals)}</div>
+      </div>
+    `).join('');
+  }
+
+  $('view-roadmap').innerHTML = `
+    <div class="hud p-5 md:p-6 mb-4">
+      <div class="font-mono text-[10px] tracking-[.3em] text-neon">[ WORLD MAP ]</div>
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="font-orb font-black text-xl">ADAPTIVE ROADMAP LATTICE</div>
+        <button onclick="exportRoadmap()" class="btn-ghost !py-2 !text-[10px]">
+          ${sys.premium ? '⬇ EXPORT PDF' : '⬇ EXPORT (PREMIUM)'}
+        </button>
+      </div>
+      <div class="flex flex-wrap gap-2 mt-4">
+        ${[['d7', '7-DAY'], ['d30', '30-DAY'], ['d90', '90-DAY'], ['m6', '6-MONTH'], ['y1', '1-YEAR']].map(([k, l]) => `
+          <button onclick="roadTab='${k}';renderRoadmap()" class="tabbtn ${T === k ? 'on' : ''}">
+            ${l}${!sys.premium && ['d90', 'm6', 'y1'].includes(k) ? ' 🔒' : ''}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="relative">
+      <div class="grid sm:grid-cols-2 gap-3 ${locked ? 'lockblur' : ''}">
+        ${inner}
+      </div>
+      ${locked ? `
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+          <div class="hud p-6 text-center max-w-xs shadow-2xl">
+            <div class="font-orb font-bold text-neon">◈ PREMIUM HORIZON</div>
+            <p class="text-xs text-mut mt-2">Long-term roadmap forecasting (90D / 6M / 1Y) unlocks with Premium Access.</p>
+            <button onclick="showView('subscription')" class="btn-sys btn-viol w-full mt-4 !py-2">Unlock Lattice ◈</button>
+          </div>
+        </div>
+      ` : ''}
+    </div>
+
+    <div class="hud p-5 mt-4">
+      <div class="font-orb font-bold text-sm mb-3">✦ HABIT ANCHORS</div>
+      ${sys.habits.map(h => `
+        <div class="flex gap-3 p-2.5 border-b border-white/5 last:border-0">
+          <span class="text-green-400 font-bold">✔</span>
+          <div>
+            <div class="font-bold text-sm">${esc(h.t)}</div>
+            <div class="text-xs text-mut">${esc(h.w)}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function exportRoadmap() {
+  if (!S.sys.premium) {
+    showView('subscription');
+    notify('PREMIUM FEATURE', 'High-res PDF export requires Premium.', 'warn');
+    return;
+  }
+  notify('EXPORT ENGINE READY', 'Opening print/PDF export dialog...', 'info');
+  setTimeout(() => window.print(), 600);
+}
+
+// D. STATS VIEW
+function renderStats() {
+  const sys = S.sys;
+  $('view-stats').innerHTML = `
+    <div class="grid lg:grid-cols-2 gap-4">
+      <div class="hud p-6">
+        <div class="font-mono text-[10px] tracking-[.3em] text-neon">[ ATTRIBUTE MATRIX ]</div>
+        <div class="font-orb font-black text-xl mb-5">SEVEN PILLARS</div>
+        ${STATS.map(([k, d, c]) => `
+          <div class="mb-4">
+            <div class="flex justify-between items-baseline">
+              <div>
+                <span class="font-orb font-bold" style="color:${c}">${k}</span>
+                <span class="text-xs text-mut ml-1">${d}</span>
+              </div>
+              <span class="font-orb font-black text-xl">${sys.stats[k]}</span>
+            </div>
+            <div class="statbar mt-1 !h-[8px]">
+              <i class="statbari" style="width:${clamp(sys.stats[k] / 30 * 100, 4, 100)}%;background:${c};box-shadow:0 0 10px ${c}"></i>
+            </div>
+            <div class="font-mono text-[10px] text-mut mt-1">${trainHint(k)}</div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="space-y-4">
+        <div class="hud p-6">
+          <div class="font-orb font-bold text-sm mb-3">◎ ATTRIBUTE RADAR</div>
+          <div class="h-64 relative">
+            <canvas id="chRadar"></canvas>
+          </div>
+        </div>
+
+        <div class="hud p-6">
+          <div class="font-orb font-bold text-sm mb-2">◈ RANK LADDER</div>
+          ${['E', 'D', 'C', 'B', 'A', 'S', 'SS'].map(r => {
+            const cur = rankFor(sys.level) === r;
+            return `
+              <div class="flex items-center gap-3 py-1.5">
+                <span class="font-orb font-black text-base rank-${r} w-8">${r}</span>
+                <div class="flex-1 h-2 rounded-full ${cur ? 'bg-gradient-to-r from-cyan-400 to-violet-500 shadow-[0_0_8px_#00E5FF]' : 'bg-white/5 border border-white/5'}"></div>
+                ${cur ? '<span class="font-mono text-[10px] text-neon">◄ CURRENT</span>' : ''}
+              </div>
+            `;
+          }).join('')}
+          <div class="font-mono text-[11px] text-mut mt-3">Next Rank Gate: LV ${nextRankLvl(sys.level)}</div>
+        </div>
+      </div>
+    </div>
+  `;
+  mkRadar();
+}
+
+function trainHint(k) {
+  return {
+    STR: 'Train via workouts, pushups, mobility',
+    INT: 'Train via active recall, reading, analysis',
+    FOC: 'Train via deep work blocks, meditation',
+    DISC: 'Train via on-time wake, phone fasting',
+    CRE: 'Train via creative drafting, shipping builds',
+    SKL: 'Train via deliberate technical drills',
+    STA: 'Train via holding streaks & sleep windows'
+  }[k] || 'Daily repetitions';
+}
+
+function nextRankLvl(l) {
+  if (l < 5) return '5 (D)';
+  if (l < 10) return '10 (C)';
+  if (l < 15) return '15 (B)';
+  if (l < 20) return '20 (A)';
+  if (l < 25) return '25 (S)';
+  if (l < 30) return '30 (SS)';
+  return 'MAX TRANSCENDED';
+}
+
+let radarChart = null;
+function mkRadar() {
+  const ctx = $('chRadar');
+  if (!ctx || !window.Chart) return;
+  if (radarChart) radarChart.destroy();
+  const sys = S.sys;
+
+  radarChart = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: STATS.map(s => s[0]),
+      datasets: [{
+        label: 'Current Attributes',
+        data: STATS.map(s => sys.stats[s[0]] || 5),
+        backgroundColor: 'rgba(0, 229, 255, 0.25)',
+        borderColor: '#00E5FF',
+        borderWidth: 2,
+        pointBackgroundColor: '#A855F7',
+        pointBorderColor: '#fff',
+        pointRadius: 3
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        r: {
+          min: 0,
+          max: 30,
+          ticks: { display: false, stepSize: 5 },
+          grid: { color: 'rgba(255, 255, 255, 0.08)' },
+          angleLines: { color: 'rgba(0, 229, 255, 0.15)' },
+          pointLabels: { color: '#8B9BB8', font: { family: 'Orbitron', size: 10 } }
+        }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+// E. SKILL TREE VIEW
+let skillBr = 0;
+function renderSkills() {
+  const sys = S.sys;
+  const br = SKILLTREE[skillBr];
+
+  $('view-skills').innerHTML = `
+    <div class="hud p-5 mb-4">
+      <div class="flex flex-wrap justify-between items-center gap-3">
+        <div>
+          <div class="font-mono text-[10px] tracking-[.3em] text-viol">[ SKILL TREE ]</div>
+          <div class="font-orb font-black text-xl">EVOLUTION BRANCHES</div>
+        </div>
+        <div class="font-orb text-sm">SKILL POINTS: <span class="text-neon font-black">${sys.sp}</span></div>
+      </div>
+      <div class="flex flex-wrap gap-2 mt-4">
+        ${SKILLTREE.map((b, i) => `
+          <button onclick="skillBr=${i};renderSkills()" class="tabbtn ${i === skillBr ? 'on' : ''}" style="${i === skillBr ? `border-color:${b.color};color:${b.color}` : ''}">
+            ${b.br}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="hud p-6">
+      <div class="font-orb font-bold mb-1" style="color:${br.color}">${br.br} PATHWAY</div>
+      <p class="text-mut text-xs mb-6">Spend Skill Points (1 earned per level-up). High tiers require both minimum level and attribute thresholds.</p>
+      <div class="flex flex-col items-center gap-0">
+        ${br.nodes.map((n, i) => {
+          const id = br.br + '-' + i;
+          const un = sys.unlocked.includes(id);
+          const prevOk = i === 0 || sys.unlocked.includes(br.br + '-' + (i - 1));
+          const lvlOk = sys.level >= n[2], statOk = (sys.stats[n[3]] || 0) >= n[4];
+          const can = !un && prevOk && lvlOk && statOk && sys.sp > 0;
+          const advLocked = !sys.premium && i >= 2;
+
+          return `
+            ${i > 0 ? `<div class="w-[2px] h-7 ${sys.unlocked.includes(br.br + '-' + (i - 1)) && un ? 'bg-neon' : 'bg-white/10'}"></div>` : ''}
+            <div class="flex items-center gap-4 w-full max-w-md p-3 rounded-xl border ${un ? 'border-cyan-400/50 bg-cyan-400/5' : can ? 'border-yellow-400/40 bg-yellow-400/5' : 'border-white/10 bg-white/[.02]'}">
+              <div class="skillnode ${un ? 'unlocked' : can ? 'avail' : 'locked'}" onclick="unlockSkill('${id}',${i})" style="${un ? `border-color:${br.color};box-shadow:0 0 16px ${br.color}55` : ''}">
+                ${un ? '✔' : (i + 1)}
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="font-bold text-sm truncate">${n[0]} ${un ? '<span class="text-green-400 text-xs">· ACTIVE</span>' : ''}</div>
+                <div class="text-xs text-mut">${n[1]}</div>
+                <div class="font-mono text-[10px] mt-1 ${lvlOk && statOk ? 'text-neon' : 'text-mut'}">REQ: LV ${n[2]} · ${n[3]} ${n[4]}</div>
+              </div>
+              ${!un ? advLocked ? '<span class="font-mono text-[9px] text-viol">🔒 PREM</span>' : `
+                <button onclick="unlockSkill('${id}',${i})" class="btn-ghost !py-1.5 !px-3 !text-[10px] ${can ? '' : 'opacity-40'}">UNLOCK</button>
+              ` : ''}
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function unlockSkill(id, idx) {
+  const sys = S.sys;
+  const br = SKILLTREE[skillBr];
+  const n = br.nodes[idx];
+  if (sys.unlocked.includes(id)) return;
+  if (!sys.premium && idx >= 2) {
+    showView('subscription');
+    notify('PREMIUM SKILL TIER', 'Advanced skill tree tiers require Premium.', 'warn');
+    return;
+  }
+  if (idx > 0 && !sys.unlocked.includes(br.br + '-' + (idx - 1))) return notify('LOCKED', 'Unlock previous skill node first.', 'warn');
+  if (sys.level < n[2]) return notify('LEVEL REQUIREMENT', 'Requires Player Level ' + n[2] + '.', 'warn');
+  if ((sys.stats[n[3]] || 0) < n[4]) return notify('ATTRIBUTE TOO LOW', 'Requires ' + n[3] + ' ' + n[4] + '. Train this stat.', 'warn');
+  if (sys.sp < 1) return notify('NO SKILL POINTS', 'Level up to earn skill points.', 'warn');
+
+  sys.sp--;
+  sys.unlocked.push(id);
+  save();
+  updateHUD();
+  notify('NEW SKILL UNLOCKED', n[0] + ' (' + br.br + ' Path)', 'viol');
+  beep(1100, 0.18, 'sine', 0.05);
+  renderSkills();
+}
+
+// F. BOSSES VIEW
+function renderBosses() {
+  const sys = S.sys;
+  $('view-bosses').innerHTML = `
+    <div class="hud p-5 md:p-6 mb-4">
+      <div class="font-mono text-[10px] tracking-[.3em] text-red-400">[ BOSS GATE ]</div>
+      <div class="font-orb font-black text-xl">MONTHLY BOSS GATES</div>
+      <p class="text-mut text-xs mt-1">High-stakes goals broken into sub-phases. Damage weekly. Slay monthly. Safe psychological pressure only.</p>
+    </div>
+
+    <div class="space-y-4">
+      ${sys.bosses.map(b => {
+        const done = b.phases.filter(p => p.done).length;
+        const hp = 1 - (done / b.phases.length);
+        return `
+          <div class="hud ${b.claimed ? 'opacity-70' : 'hud-red'} p-5">
+            <div class="flex flex-wrap justify-between items-start gap-2">
+              <div>
+                <div class="font-mono text-[10px] text-red-400">MONTH 0${b.month} GATE</div>
+                <div class="font-orb font-black text-lg text-white">${esc(b.name)}</div>
+                <div class="text-xs text-mut">${esc(b.desc)}</div>
+              </div>
+              <div class="font-orb text-sm text-neon font-bold">+${b.xp} XP</div>
+            </div>
+
+            <div class="boss-hp my-3">
+              <i class="boss-hpi" style="width:${hp * 100}%"></i>
+            </div>
+            <div class="flex justify-between font-mono text-[10px] text-mut mb-4">
+              <span>HP: ${Math.round(hp * 100)}%</span>
+              <span>PHASES: ${done}/${b.phases.length} CLEARED</span>
+            </div>
+
+            <div class="space-y-2">
+              ${b.phases.map((p, pi) => `
+                <div onclick="toggleBossPhase('${b.id}',${pi})" class="p-2.5 rounded-lg border ${p.done ? 'border-green-400/40 bg-green-400/10 text-green-300 line-through' : 'border-white/10 bg-white/5'} flex items-center justify-between cursor-pointer hover:border-neon/40 transition">
+                  <span class="text-xs font-semibold">${esc(p.t)}</span>
+                  <span class="font-mono text-xs">${p.done ? '✔ CLEARED' : 'PENDING'}</span>
+                </div>
+              `).join('')}
+            </div>
+            ${b.claimed ? '<div class="font-orb text-xs text-green-400 font-bold mt-3 text-center">GATE SLAIN &amp; REWARD CLAIMED</div>' : ''}
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+// G. ANALYTICS VIEW
+let analyticsChart = null;
+function renderAnalytics() {
+  const sys = S.sys;
+  const rate = sys.daily.length ? Math.round((sys.daily.filter(q => q.done).length / sys.daily.length) * 100) : 0;
+
+  $('view-analytics').innerHTML = `
+    <div class="grid lg:grid-cols-3 gap-4">
+      <div class="lg:col-span-2 space-y-4">
+        <div class="hud p-5 md:p-6">
+          <div class="font-mono text-[10px] tracking-[.3em] text-neon">[ VELOCITY METRICS ]</div>
+          <div class="font-orb font-black text-xl mb-4">14-DAY XP VELOCITY</div>
+          <div class="h-60 relative">
+            <canvas id="chVelocity"></canvas>
+          </div>
+        </div>
+
+        <div class="hud p-5">
+          <div class="font-orb font-bold text-sm mb-3">28-DAY CONSISTENCY HEATMAP</div>
+          <div class="grid grid-cols-7 gap-1.5">
+            ${sys.heat.map(v => {
+              const bg = v === 0 ? 'rgba(255,255,255,.05)' : v === 1 ? 'rgba(0,229,255,.25)' : v === 2 ? 'rgba(0,229,255,.5)' : v === 3 ? 'rgba(0,229,255,.75)' : '#00E5FF';
+              return `<div class="heat" style="background:${bg}" title="${v} quests completed"></div>`;
+            }).join('')}
+          </div>
+          <div class="flex justify-between font-mono text-[10px] text-mut mt-2">
+            <span>28 DAYS AGO</span>
+            <span>TODAY</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div class="hud p-5 text-center">
+          <div class="font-mono text-[10px] text-mut">TODAY'S EXECUTION RATE</div>
+          <div class="font-orb font-black text-4xl text-neon mt-2">${rate}%</div>
+          <div class="text-xs text-mut mt-1">Daily Protocol Alignment</div>
+        </div>
+
+        <div class="hud p-5">
+          <div class="font-orb font-bold text-sm mb-2">WEEKLY AI DEBRIEF</div>
+          <p class="text-xs text-mut leading-relaxed">
+            ${sys.streak >= 4 ? 'Consistency coefficient is optimal. Velocity is accelerating.' : 'Slight friction detected in afternoon time lattice. Adjust deep work blocks.'}
+          </p>
+          <div class="font-mono text-[10px] text-viol mt-3">
+            ${sys.premium ? 'AI Deep Analysis active · Weekly synthesis unlocked' : '◈ Upgrade to Premium for full behavioral audits.'}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  mkVelocity();
+}
+
+function mkVelocity() {
+  const ctx = $('chVelocity');
+  if (!ctx || !window.Chart) return;
+  if (analyticsChart) analyticsChart.destroy();
+  const sys = S.sys;
+
+  const labels = Array.from({ length: 14 }, (_, i) => `D-${13 - i}`);
+  labels[13] = 'TODAY';
+
+  analyticsChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'XP Earned',
+        data: sys.xpLog || Array(14).fill(0),
+        backgroundColor: 'rgba(0, 229, 255, 0.65)',
+        borderColor: '#00E5FF',
+        borderWidth: 1,
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: { color: 'rgba(255, 255, 255, 0.06)' },
+          ticks: { color: '#8B9BB8', font: { family: 'Orbitron', size: 9 } }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { color: '#8B9BB8', font: { family: 'Orbitron', size: 9 } }
+        }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+// H. HISTORY VIEW
+function renderHistory() {
+  const sys = S.sys;
+  $('view-history').innerHTML = `
+    <div class="hud p-5 md:p-6 mb-4">
+      <div class="font-mono text-[10px] tracking-[.3em] text-neon">[ EXECUTION LOG ]</div>
+      <div class="font-orb font-black text-xl">CHRONOLOGICAL HISTORY</div>
+    </div>
+
+    <div class="hud p-5 space-y-2 max-h-[600px] overflow-y-auto">
+      ${sys.history.map(h => `
+        <div class="flex items-center justify-between py-2 border-b border-white/5 last:border-0 font-mono text-xs">
+          <div class="flex items-center gap-2 min-w-0 pr-2">
+            <span class="text-neon shrink-0">${h.d}</span>
+            <span class="text-white/90 truncate">${esc(h.t)}</span>
+          </div>
+          ${h.xp ? `<span class="text-green-400 shrink-0 font-bold">+${h.xp} XP</span>` : ''}
+        </div>
+      `).join('') || '<div class="text-mut text-xs text-center py-4">No events logged yet.</div>'}
+    </div>
+  `;
+}
+
+// I. PROFILE VIEW
+function renderProfile() {
+  const p = S.profile, sys = S.sys;
+  $('view-profile').innerHTML = `
+    <div class="grid md:grid-cols-3 gap-4">
+      <div class="hud p-6 text-center flex flex-col items-center justify-center">
+        <div class="w-20 h-20 rounded-2xl font-orb font-black text-3xl text-black flex items-center justify-center mb-3 shadow-[0_0_20px_#00E5FF]" style="background:linear-gradient(135deg,#00E5FF,#A855F7)">
+          ${S.user.name[0] || 'P'}
+        </div>
+        <div class="font-orb font-bold text-lg">${esc(S.user.name)}</div>
+        <div class="font-mono text-xs text-mut">${esc(S.user.email)}</div>
+        <div class="font-orb font-black text-xl rank-${rankFor(sys.level)} mt-2">RANK ${rankFor(sys.level)}</div>
+        <div class="font-mono text-[10px] text-neon mt-1">${sys.premium ? 'PREMIUM MONARCH ◈' : 'FREE RECRUIT'}</div>
+      </div>
+
+      <div class="md:col-span-2 hud p-6 space-y-3">
+        <div class="font-orb font-bold text-sm tracking-wider mb-2">CALIBRATED PROFILE MATRIX</div>
+        <div class="grid sm:grid-cols-2 gap-3 text-xs">
+          <div class="p-2.5 rounded bg-white/5 border border-white/10">
+            <span class="text-mut block font-mono text-[10px]">OCCUPATION</span>
+            <span class="font-semibold">${esc(p.occupation || 'N/A')}</span>
+          </div>
+          <div class="p-2.5 rounded bg-white/5 border border-white/10">
+            <span class="text-mut block font-mono text-[10px]">SLEEP WINDOW</span>
+            <span class="font-semibold">${fmtTime(p.wake)} → ${fmtTime(p.sleep)}</span>
+          </div>
+          <div class="p-2.5 rounded bg-white/5 border border-white/10">
+            <span class="text-mut block font-mono text-[10px]">DAILY AVAILABLE TIME</span>
+            <span class="font-semibold">${esc(p.available || 'N/A')}</span>
+          </div>
+          <div class="p-2.5 rounded bg-white/5 border border-white/10">
+            <span class="text-mut block font-mono text-[10px]">PEAK ENERGY</span>
+            <span class="font-semibold">${esc(p.energy || 'N/A')}</span>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-white/10 flex flex-wrap gap-2">
+          <button onclick="recalibrate()" class="btn-ghost !py-2 !text-xs">Re-Calibrate AI Protocol</button>
+          <button onclick="exportJSON()" class="btn-ghost !py-2 !text-xs">Backup Protocol Data (JSON)</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function recalibrate() {
+  if (confirm('Re-running calibration will update your schedule and roadmap while preserving your level, stats and XP. Continue?')) {
+    startOnboarding();
+  }
+}
+
+function exportJSON() {
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(S, null, 2));
+  const dl = document.createElement('a');
+  dl.setAttribute("href", dataStr);
+  dl.setAttribute("download", `level_system_${S.user.name}_backup.json`);
+  dl.click();
+  dl.remove();
+}
+
+// J. SUBSCRIPTION VIEW
+function renderSubscription() {
+  const sys = S.sys;
+  $('view-subscription').innerHTML = `
+    <div class="hud p-5 md:p-6 mb-4">
+      <div class="font-mono text-[10px] tracking-[.3em] text-viol">[ ASCENSION PASS ]</div>
+      <div class="font-orb font-black text-xl">SUBSCRIPTION MANAGEMENT</div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-5">
+      <div class="hud p-6">
+        <div class="font-orb font-bold text-mut">CURRENT STATUS</div>
+        <div class="font-orb font-black text-2xl mt-1 ${sys.premium ? 'text-viol' : 'text-white'}">
+          ${sys.premium ? 'PREMIUM ASCENDED ◈' : 'FREE RECRUIT TIER'}
+        </div>
+        ${sys.premium ? `
+          <div class="text-xs text-mut mt-2">Active Plan: <span class="text-white font-bold">${sys.plan || 'Unlimited Pass'}</span></div>
+          <div class="text-xs text-mut">Access: Unlimited Roadmaps, Advanced Analytics, Skill Tree Tiers</div>
+          <button onclick="cancelSub()" class="btn-ghost !py-2 !text-xs !border-red-500/40 !text-red-400 mt-6">Cancel Subscription</button>
+        ` : `
+          <p class="text-xs text-mut mt-3 leading-relaxed">
+            Free tier includes full core execution loops (daily quests, XP, stats, 7D/30D roadmap). Upgrade to unlock 90D/6M/1Y planning, all skill tree tiers, high-res PDF exports and deep behavioral AI audits.
+          </p>
+        `}
+      </div>
+
+      <div class="hud hud-viol p-6">
+        <div class="font-orb font-bold text-viol text-sm mb-3">SELECT PASS TIER</div>
+        <div class="grid grid-cols-3 gap-2 mb-4">
+          <div class="p-3 rounded-lg border border-neon/30 text-center cursor-pointer planpick" data-plan="2W" onclick="pickPlan('2W',this)">
+            <div class="font-orb font-bold text-sm">₹199</div>
+            <div class="text-[10px] text-mut">2 weeks</div>
+          </div>
+          <div class="p-3 rounded-lg border border-neon/30 text-center cursor-pointer planpick" data-plan="2M" onclick="pickPlan('2M',this)">
+            <div class="font-orb font-bold text-sm">₹399</div>
+            <div class="text-[10px] text-mut">2 months</div>
+          </div>
+          <div class="p-3 rounded-lg border border-viol/60 bg-viol/15 text-center cursor-pointer planpick ring-1 ring-viol" data-plan="1Y" onclick="pickPlan('1Y',this)">
+            <div class="font-orb font-bold text-sm text-white">₹2,999</div>
+            <div class="text-[10px] text-mut">1 year</div>
+          </div>
+        </div>
+        <button onclick="openCheckout()" class="btn-sys btn-viol w-full">Subscribe with Secure Gateway</button>
+        <div class="font-mono text-[9px] text-mut mt-3 text-center">Secure simulated checkout · No real card charged in demo</div>
+      </div>
+    </div>
+  `;
+}
+
+function openCheckout() {
+  const planNames = { '2W': '₹199 for 2 Weeks', '2M': '₹399 for 2 Months', '1Y': '₹2,999 for 1 Year' };
+  openModal(`
+    <div class="font-mono text-[10px] tracking-[.3em] text-neon">[ SECURE MOCK GATEWAY ]</div>
+    <h3 class="font-orb font-black text-xl mt-1 mb-1">Ascension Protocol</h3>
+    <div class="text-xs text-mut mb-4">Plan: <span class="text-white font-bold">${planNames[selPlan] || selPlan}</span></div>
+    
+    <label class="font-mono text-[10px] text-mut">CARDHOLDER NAME</label>
+    <input class="inp mt-1 mb-3" placeholder="Full Legal Name" value="${esc(S?.user?.name || '')}">
+    
+    <label class="font-mono text-[10px] text-mut">TEST CARD NUMBER</label>
+    <input class="inp mt-1 mb-3" placeholder="4242 •••• •••• 4242" maxlength="19">
+    
+    <div class="grid grid-cols-2 gap-2 mb-4">
+      <div>
+        <label class="font-mono text-[10px] text-mut">EXPIRY</label>
+        <input class="inp mt-1" placeholder="MM/YY">
+      </div>
+      <div>
+        <label class="font-mono text-[10px] text-mut">CVC</label>
+        <input class="inp mt-1" placeholder="•••" type="password" maxlength="4">
+      </div>
+    </div>
+
+    <div class="p-2.5 rounded bg-black/50 border border-white/10 font-mono text-[10px] text-mut mb-4">
+      🔒 Secure Tokenization · End-to-end encrypted · Server-side webhook verified.
+    </div>
+
+    <button onclick="confirmSub()" class="btn-sys btn-viol w-full">Authorize &amp; Ascend</button>
+  `);
+}
+
+function confirmSub() {
+  closeModal();
+  S.sys.premium = true;
+  S.sys.plan = selPlan;
+  S.sys.premiumSince = Date.now();
+  save();
+  updateHUD();
+  showView('subscription');
+  notify('PREMIUM ASCENDED', 'All long-term lattices & skill trees unlocked.', 'viol');
+  beep(1200, 0.25, 'sawtooth', 0.05);
+}
+
+function cancelSub() {
+  if (confirm('Cancel your premium ascension? You will revert to Free Recruit tier.')) {
+    S.sys.premium = false;
+    S.sys.plan = null;
+    save();
+    updateHUD();
+    showView('subscription');
+    notify('SUBSCRIPTION CANCELLED', 'Reverted to standard tier.', 'warn');
+  }
+}
+
+// K. SETTINGS VIEW
+function renderSettings() {
+  const p = S.prefs;
+  $('view-settings').innerHTML = `
+    <div class="hud p-5 md:p-6 mb-4">
+      <div class="font-mono text-[10px] tracking-[.3em] text-neon">[ SYSTEM PREFERENCES ]</div>
+      <div class="font-orb font-black text-xl">SYSTEM CALIBRATION</div>
+    </div>
+
+    <div class="hud p-6 space-y-5">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="font-bold text-sm">System Audio Synthesizer</div>
+          <div class="text-xs text-mut">Subtle sci-fi synth tones on quest completions &amp; level-ups</div>
+        </div>
+        <input type="checkbox" ${p.sound ? 'checked' : ''} onchange="togglePref('sound',this.checked)" class="w-5 h-5 accent-cyan-400">
+      </div>
+
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="font-bold text-sm">Reduced Motion Mode</div>
+          <div class="text-xs text-mut">Disables ambient scans and viewport animations</div>
+        </div>
+        <input type="checkbox" ${p.reducedMotion ? 'checked' : ''} onchange="togglePref('reducedMotion',this.checked)" class="w-5 h-5 accent-cyan-400">
+      </div>
+
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="font-bold text-sm">HUD System Notifications</div>
+          <div class="text-xs text-mut">Display animated corner alerts for quest completions &amp; warnings</div>
+        </div>
+        <input type="checkbox" ${p.notif ? 'checked' : ''} onchange="togglePref('notif',this.checked)" class="w-5 h-5 accent-cyan-400">
+      </div>
+
+      <div class="pt-4 border-t border-white/10">
+        <div class="font-orb font-bold text-sm text-red-400 mb-2">DANGER ZONE</div>
+        <div class="flex flex-wrap gap-2">
+          <button onclick="resetData()" class="btn-ghost !py-2 !text-xs !border-red-500/40 !text-red-400">Reset System Progress</button>
+          <button onclick="deleteAccount()" class="btn-ghost !py-2 !text-xs !border-red-500/40 !text-red-400">Delete Account &amp; Wipe Data</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function togglePref(k, v) {
+  S.prefs[k] = v;
+  if (k === 'reducedMotion') document.body.classList.toggle('reduced-motion', v);
+  save();
+}
+
+function resetData() {
+  if (confirm('Are you sure you want to reset your stats, XP and daily quests? Profile info will remain.')) {
+    S.sys = generateSystem(S.profile);
+    save();
+    updateHUD();
+    showView('dashboard');
+    notify('DATA RESET', 'System refreshed to baseline state.', 'warn');
+  }
+}
+
+function deleteAccount() {
+  if (confirm('Permanent action: Delete this account and all local execution data completely?')) {
+    localStorage.removeItem(DB);
+    S = null;
+    showScreen('screen-landing');
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   13. OWNER ACCESS & REDEEM GATE (SECURE HASHING)
+   ══════════════════════════════════════════════════ */
+function openRedeem() {
+  openModal(`
+    <div class="font-mono text-[10px] tracking-[.3em] text-neon">[ PROTOCOL ACCESS GATE ]</div>
+    <h3 class="font-orb font-black text-xl mt-1 mb-2">System Voucher / Key</h3>
+    <p class="text-xs text-mut mb-4">Enter a valid encrypted System Key or Ascension Voucher.</p>
+    <input id="rCode" class="inp mb-4" placeholder="Enter System Code..." autocomplete="off">
+    <div id="rErr" class="hidden text-xs text-red-400 mb-3 p-2 rounded bg-red-500/10 border border-red-500/20"></div>
+    <button onclick="submitRedeem()" class="btn-sys w-full">Verify Key ◈</button>
+  `);
+}
+
+async function submitRedeem() {
+  const code = ($('rCode')?.value || '').trim();
+  const err = $('rErr');
+  err.classList.add('hidden');
+
+  if (!code) {
+    err.textContent = 'Please enter a valid key.';
+    err.classList.remove('hidden');
+    return;
+  }
+
+  // Rate limiting simulation
+  S = S || defaultState();
+  S.redeemAttempts = S.redeemAttempts || [];
+  const now = Date.now();
+  S.redeemAttempts = S.redeemAttempts.filter(t => now - t < 60000);
+  if (S.redeemAttempts.length >= 5) {
+    err.textContent = 'Too many attempts. Gate locked for 60 seconds.';
+    err.classList.remove('hidden');
+    return;
+  }
+  S.redeemAttempts.push(now);
+
+  // Secure client verification using cryptographic SHA-256 hash comparison
+  const inputHash = await sha256Hex(code);
+
+  if (inputHash === OWNER_CODE_HASH) {
+    closeModal();
+    if (!S.sys) {
+      if (!S.profile) S.profile = demoProfile();
+      S.sys = generateSystem(S.profile);
+      S.onboarded = true;
+    }
+    if (!S.user) {
+      S.user = { email: 'owner@system.protocol', name: 'SYSTEM_OWNER', created: Date.now() };
+    }
+    S.sys.premium = true;
+    S.sys.plan = 'OWNER PASS (UNLIMITED)';
+    save();
+    enterApp();
+    notify('OWNER ACCESS GRANTED', 'Unlimited protocol clearance activated.', 'viol');
+    beep(1300, 0.3, 'sawtooth', 0.06);
+  } else {
+    err.textContent = 'Invalid key or authorization expired.';
+    err.classList.remove('hidden');
+    beep(200, 0.15, 'sawtooth', 0.04);
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   14. LEGAL & SAFETY MODALS
+   ══════════════════════════════════════════════════ */
+function openLegal(type) {
+  const content = {
+    terms: `
+      <div class="font-mono text-[10px] tracking-[.3em] text-neon">[ LEGAL ]</div>
+      <h3 class="font-orb font-black text-xl mt-1 mb-3">Terms of Service</h3>
+      <div class="text-xs text-mut space-y-2 max-h-72 overflow-y-auto pr-1">
+        <p>1. <b>Execution Protocol:</b> LEVEL//SYSTEM is a self-improvement task manager and habit operating system. It provides motivational structures and time-blocking assistance.</p>
+        <p>2. <b>Personal Responsibility:</b> You are solely responsible for your health, work, academic choices, and daily schedule.</p>
+        <p>3. <b>Zero Malicious Content:</b> The system does not endorse extreme physical stress, dangerous sleep deprivation, or disordered routines.</p>
+        <p>4. <b>Fair Use:</b> Automated scripts or abuse of AI generation lattices are strictly restricted.</p>
+      </div>
+      <button onclick="closeModal()" class="btn-sys w-full mt-4">Acknowledge</button>
+    `,
+    privacy: `
+      <div class="font-mono text-[10px] tracking-[.3em] text-neon">[ PRIVACY ]</div>
+      <h3 class="font-orb font-black text-xl mt-1 mb-3">Privacy Policy</h3>
+      <div class="text-xs text-mut space-y-2 max-h-72 overflow-y-auto pr-1">
+        <p>1. <b>Local-First Privacy:</b> All task entries, notes, schedules, and custom goals are stored on your device via encrypted browser storage.</p>
+        <p>2. <b>No Data Selling:</b> We do not sell, rent, or monetize your personal execution logs or habits.</p>
+        <p>3. <b>Right to Erasure:</b> You can download a JSON backup or wipe your entire database from the Settings tab at any time.</p>
+      </div>
+      <button onclick="closeModal()" class="btn-sys w-full mt-4">Acknowledge</button>
+    `,
+    refunds: `
+      <div class="font-mono text-[10px] tracking-[.3em] text-neon">[ BILLING ]</div>
+      <h3 class="font-orb font-black text-xl mt-1 mb-3">Refund Policy</h3>
+      <div class="text-xs text-mut space-y-2 max-h-72 overflow-y-auto pr-1">
+        <p>1. <b>14-Day Guarantee:</b> If you are not completely satisfied with Premium within 14 days of purchase, request a full refund via billing support.</p>
+        <p>2. <b>Instant Cancellation:</b> Cancel subscription renewals with a single click from the Pass tab at any time.</p>
+      </div>
+      <button onclick="closeModal()" class="btn-sys w-full mt-4">Acknowledge</button>
+    `,
+    safety: `
+      <div class="font-mono text-[10px] tracking-[.3em] text-green-400">[ PROTOCOL SAFETY ]</div>
+      <h3 class="font-orb font-black text-xl mt-1 mb-3">Safety &amp; Well-Being Charter</h3>
+      <div class="text-xs text-mut space-y-2 max-h-72 overflow-y-auto pr-1">
+        <p class="text-white font-semibold">The System operates strictly under safe, sustainable psychological protocols:</p>
+        <p>✓ <b>No Humiliation or Self-Harm:</b> Missed tasks trigger recovery quests and light XP penalties only. No abusive mechanics exist.</p>
+        <p>✓ <b>Circadian Protection:</b> Schedules respect 7–8 hours of uninterrupted sleep and mandatory real-life school/work blocks.</p>
+        <p>✓ <b>Recovery Overload Fallback:</b> Users in high-stress states automatically receive deloaded quests and rest recommendations.</p>
+      </div>
+      <button onclick="closeModal()" class="btn-sys w-full mt-4">Understood</button>
+    `
+  };
+  openModal(content[type] || content.terms);
+}
+
+function openModal(html) {
+  $('modalBox').innerHTML = html;
+  $('modalRoot').classList.remove('hidden');
+}
+
+function closeModal() {
+  $('modalRoot').classList.add('hidden');
+}
+
+/* ══════════════════════════════════════════════════
+   15. AMBIENT BACKGROUND MATRIX CANVAS
+   ══════════════════════════════════════════════════ */
+(function initCanvas() {
+  const c = $('bgc');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  let w = c.width = window.innerWidth, h = c.height = window.innerHeight;
+
+  window.addEventListener('resize', () => {
+    w = c.width = window.innerWidth;
+    h = c.height = window.innerHeight;
+  });
+
+  const dots = Array.from({ length: 40 }, () => ({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: (Math.random() - 0.5) * 0.3,
+    r: Math.random() * 1.5 + 0.5
+  }));
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = 'rgba(0, 229, 255, 0.4)';
+    for (let i = 0; i < dots.length; i++) {
+      const d = dots[i];
+      d.x += d.vx;
+      d.y += d.vy;
+      if (d.x < 0) d.x = w;
+      if (d.x > w) d.x = 0;
+      if (d.y < 0) d.y = h;
+      if (d.y > h) d.y = 0;
+
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+      ctx.fill();
+
+      for (let j = i + 1; j < dots.length; j++) {
+        const d2 = dots[j];
+        const dist = Math.hypot(d.x - d2.x, d.y - d2.y);
+        if (dist < 100) {
+          ctx.strokeStyle = `rgba(0, 229, 255, ${0.12 * (1 - dist / 100)})`;
+          ctx.lineWidth = 0.5;
+          ctx.beginPath();
+          ctx.moveTo(d.x, d.y);
+          ctx.lineTo(d2.x, d2.y);
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ══════════════════════════════════════════════════
+   16. BOOT & INITIALIZATION
+   ══════════════════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded', () => {
+  S = load();
+
+  // Boot progress sequence
+  let p = 0;
+  const iv = setInterval(() => {
+    p += 25;
+    $('bootBar').style.width = p + '%';
+    if (p === 50) $('bootLog').textContent = 'CALIBRATING ATTRIBUTE MATRICES ...';
+    if (p === 75) $('bootLog').textContent = 'ENGAGING SECURE LATTICE ...';
+    if (p >= 100) {
+      clearInterval(iv);
+      setTimeout(() => {
+        $('boot').style.opacity = '0';
+        setTimeout(() => $('boot').classList.add('hidden'), 500);
+
+        if (S && S.user && S.onboarded) {
+          enterApp();
+        } else {
+          showScreen('screen-landing');
+        }
+      }, 300);
+    }
+  }, 100);
+});
+</script>
+</body>
+</html>
